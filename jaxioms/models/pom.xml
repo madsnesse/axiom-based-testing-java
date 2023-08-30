@@ -7,9 +7,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>annotations</artifactId>
+    <artifactId>models</artifactId>
     <packaging>jar</packaging>
-    <name>annotations</name>
+
+    <name>models</name>
     <url>http://maven.apache.org</url>
 
     <properties>

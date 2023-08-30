@@ -1,0 +1,10 @@
+package org.axioms;
+import org.junit.jupiter.api.Test;
+import static junit.framework.Assert.assertEquals;
+
+public class ${CLASS_NAME}} {
+    @Test
+    public void ${TEST_METHOD_NAME} () {
+        ${TEST_METHOD_BODY};
+    }
+}
