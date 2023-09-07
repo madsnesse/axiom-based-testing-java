@@ -6,7 +6,6 @@ import no.uib.ii.Generator;
 
 import java.util.Random;
 
-import no.uib.ii.Generator;
 
 @Generator
 public class PositionGenerator implements DataGenerator<Position> {

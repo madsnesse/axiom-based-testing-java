@@ -1,7 +1,6 @@
 package org.example;
 
-
-import com.example.annotations.Axiom;
+import no.uib.ii.Axiom;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -36,7 +35,7 @@ public class Position {
      * @param c
      */
     @Axiom
-    static void addIsAssociative(Position a, Position b, Position c) {
+    public static void addIsAssociative(Position a, Position b, Position c) {
         Position aPlusB = a;
         aPlusB.add(b);
         Position bPlusC = b;

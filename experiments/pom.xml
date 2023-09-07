@@ -36,6 +36,12 @@
       <artifactId>annotations</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>RELEASE</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -47,7 +53,8 @@
         <target>17</target>
         <source>17</source>
         <annotationProcessors>
-          <annotationProcessor>no.uib.ii.processors.AnnotationProcessor</annotationProcessor>
+          <annotationProcessor>no.uib.ii.processors.AxiomProcessor</annotationProcessor>
+          <annotationProcessor>no.uib.ii.processors.GeneratorProcessor</annotationProcessor>
         </annotationProcessors>
       </configuration>
     </plugin>
