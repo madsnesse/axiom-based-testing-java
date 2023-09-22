@@ -45,7 +45,7 @@ public class AxiomProcessor extends AbstractProcessor
 
                         List<String> list = getAllAxiomsFromAncestors(e);
 
-                        var t = typeUtils.getDeclaredType((TypeElement)e);
+                        //var t = typeUtils.getDeclaredType((TypeElement)e);
                         TypeElement typeElement = (TypeElement) e;
                         //generate a junit test file
 
