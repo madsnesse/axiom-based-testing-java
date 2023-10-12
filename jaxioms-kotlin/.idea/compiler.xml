@@ -6,13 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="annotations" />
+        <module name="models" />
         <module name="processors" />
       </profile>
       <profile name="Annotation profile for jaxioms-kotlin" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processor name="org.example.Processor" />
+        <processor name="no.ii.uib.processors.Processor" />
         <module name="experiments" />
       </profile>
     </annotationProcessing>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite tests="1" failures="0" name="org.example.AppTest" time="0.001" errors="0" skipped="0">
+  <properties>
+    <property name="idea.plugins.compatible.build" value="999.SNAPSHOT"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="java.vm.version" value="17+35-2724"/>
+    <property name="sun.boot.library.path" value="/Users/madsbarvagnesse/.asdf/installs/java/openjdk-17/lib"/>
+    <property name="maven.multiModuleProjectDirectory" value="/Users/madsbarvagnesse/Studies/main-project/jaxt-2.0/jaxioms-kotlin"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="path.separator" value=":"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="user.country" value="NO"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/Users/madsbarvagnesse/Studies/main-project/jaxt-2.0/jaxioms-kotlin"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="java.runtime.version" value="17+35-2724"/>
+    <property name="idea.io.use.nio2" value="true"/>
+    <property name="os.arch" value="aarch64"/>
+    <property name="java.io.tmpdir" value="/var/folders/nh/n4j4t9153qb891q4v_7lp4sw0000gn/T/"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="classworlds.conf" value="/Users/madsbarvagnesse/.asdf/installs/maven/3.5.4/bin/m2.conf"/>
+    <property name="ide.hide.excluded.files" value="false"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/madsbarvagnesse/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="psi.track.invalidation" value="true"/>
+    <property name="maven.conf" value="/Users/madsbarvagnesse/.asdf/installs/maven/3.5.4/conf"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="java.class.version" value="61.0"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="project.structure.add.tools.jar.to.new.jdk" value="false"/>
+    <property name="os.version" value="14.0"/>
+    <property name="library.jansi.path" value="/Users/madsbarvagnesse/.asdf/installs/maven/3.5.4/lib/jansi-native"/>
+    <property name="psi.incremental.reparse.depth.limit" value="1000"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="user.home" value="/Users/madsbarvagnesse"/>
+    <property name="user.timezone" value="Europe/Oslo"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.specification.version" value="17"/>
+    <property name="user.name" value="madsbarvagnesse"/>
+    <property name="java.class.path" value="/Users/madsbarvagnesse/.asdf/installs/maven/3.5.4/boot/plexus-classworlds-2.5.2.jar"/>
+    <property name="java.vm.specification.version" value="17"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher clean install"/>
+    <property name="java.home" value="/Users/madsbarvagnesse/.asdf/installs/java/openjdk-17"/>
+    <property name="ast.loading.filter" value="false"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.version" value="17"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="sun.stderr.encoding" value="UTF-8"/>
+    <property name="maven.home" value="/Users/madsbarvagnesse/.asdf/installs/maven/3.5.4"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.version.date" value="2021-09-14"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="idea.ignore.disabled.plugins" value="true"/>
+    <property name="sun.stdout.encoding" value="UTF-8"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+  </properties>
+  <testcase classname="org.example.AppTest" name="testApp" time="0.001"/>
+</testsuite>

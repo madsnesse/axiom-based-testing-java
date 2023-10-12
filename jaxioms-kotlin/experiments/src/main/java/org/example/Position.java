@@ -2,12 +2,13 @@ package org.example;
 
 import no.uib.ii.Axiom;
 
-import static junit.framework.Assert.assertEquals;
+import java.util.ArrayList;
 
+import static junit.framework.Assert.assertEquals;
 /**
  * A position in 2D space.
  */
-public class Position {
+public class Position extends ArrayList<String> {
 
     private int x;
     private int y;
