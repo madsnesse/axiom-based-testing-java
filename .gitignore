@@ -3,3 +3,7 @@
 /.idea/
 /experiments/.idea/
 /jaxioms-kotlin/.idea/
+/jaxioms-kotlin/annotations/target/
+/jaxioms-kotlin/experiments/target/
+/jaxioms-kotlin/models/target/
+/jaxioms-kotlin/processors/target/

@@ -46,14 +46,9 @@ class Processor : AbstractProcessor() {
                                 val executableElement : ExecutableElement = element as ExecutableElement
                             }
 
-                            println(typeElement.javaClass)
-                            var classToTest = parser.parseClassOrInterfaceType(typeElement.qualifiedName.toString());
-                            classToTest.ifSuccessful(fun (classOrInterfaceType : ClassOrInterfaceType) {
-                                println(classOrInterfaceType.toString())
-                                classOrInterfaceType.findAncestor( { c -> println(c); true }, ClassOrInterfaceType::class.java)
-                            })
-                            var sourceFile = getSourceFile(packageFromQualifiedName(typeElement.qualifiedName.toString()),
-                                            classFromQualifiedName(typeElement.qualifiedName.toString()));
+                            var sourceFile = FileUtils.getSourceFile(processingEnv.filer,
+                                    packageFromQualifiedName(typeElement.qualifiedName.toString()),
+                                    classFromQualifiedName(typeElement.qualifiedName.toString()));
 
                             var traverser = ASTTraverser();
                             val cu = traverser.loadClassFromSource(sourceFile);
@@ -61,7 +56,8 @@ class Processor : AbstractProcessor() {
                             val pathToObject = traverser.getPathToObject(cu.first, cu.second);
                             println(pathToObject)
 
-                            generateTestClass(
+                            FileUtils.generateTestClass(
+                                    processingEnv.filer,
                                     getImports(),
                                     getMethods(),
                                     typeElement.simpleName.toString()
@@ -84,25 +80,6 @@ class Processor : AbstractProcessor() {
         return qualifiedName.substring(qualifiedName.lastIndexOf(".") + 1) + ".java";
     }
 
-    private fun getSourceFile(packageName: String, fileName: String): String {
-        var filer = processingEnv.filer;
-        var fileObject = filer.getResource(StandardLocation.SOURCE_PATH, packageName, fileName);
-        var s = ""
-        try {
-            fileObject.openInputStream().use { inputStream ->
-                inputStream.reader().use { reader ->
-                    reader.forEachLine { line ->
-                        s += line
-                    }
-                }
-            }
-        }
-        catch (e: Exception){
-            println(fileObject.toUri().toString()) //TODO handle exception
-        }
-        return s
-    }
-
     private fun getMethods(): List<MethodDeclaration> {
         val result = mutableListOf<MethodDeclaration>();
         val parseResult = parser.parseMethodDeclaration("public void test() {assertEquals(1, 2);}");
@@ -113,25 +90,6 @@ class Processor : AbstractProcessor() {
 
         result.add(methodDeclaration);
         return result;
-
-    }
-
-    private fun generateTestClass(imports: List<ImportDeclaration>,
-                                  methods: List<MethodDeclaration>,
-                                  nameOfClassToBeTested: String) {
-
-        var cu: CompilationUnit = CompilationUnit("no.uib.ii.jaxioms");
-        imports.forEach(fun (import: ImportDeclaration) {
-            cu.addImport(import)
-        })
-        var classDeclaration = cu.addClass("GeneratedTestClass${nameOfClassToBeTested}")
-        methods.forEach(fun (method: MethodDeclaration) {
-            classDeclaration.addMember(method)
-        })
-        println(cu.toString())
-        processingEnv.filer.createSourceFile("no.uib.ii.jaxioms.GeneratedTestClass${nameOfClassToBeTested}").openWriter().use { writer ->
-            writer.write(cu.toString())
-        }
 
     }
 
