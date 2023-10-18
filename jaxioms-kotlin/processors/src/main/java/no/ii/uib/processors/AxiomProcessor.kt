@@ -2,26 +2,25 @@ package no.ii.uib.processors
 
 import autovalue.shaded.com.google.auto.service.AutoService
 import com.github.javaparser.JavaParser
-import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.ImportDeclaration
+import com.github.javaparser.ast.NodeList
 import com.github.javaparser.ast.body.MethodDeclaration
-import com.github.javaparser.ast.type.ClassOrInterfaceType
+import com.github.javaparser.ast.body.Parameter
 import javax.annotation.processing.*
 import javax.annotation.processing.Processor
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.TypeElement
-import javax.tools.StandardLocation
+import javax.lang.model.element.*
 
 
 @SupportedAnnotationTypes("no.uib.ii.Axiom", "no.uib.ii.Generator")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor::class)
-class Processor : AbstractProcessor() {
+class AxiomProcessor : AbstractProcessor() {
 
     private val parser = JavaParser();
+
+    // mapping classnames to a list of all axioms to be applied to a class
+    private val axiomDeclarations = HashMap<String, List<AxiomDefinition>>()
 
     private fun getImports(): List<ImportDeclaration> {
         val result = mutableListOf<ImportDeclaration>();
@@ -42,9 +41,12 @@ class Processor : AbstractProcessor() {
                             val elementKind : ElementKind = element.kind
                             val typeElement = element.enclosingElement as TypeElement
 
-                            if (elementKind == ElementKind.METHOD) {
-                                val executableElement : ExecutableElement = element as ExecutableElement
+                            if (elementKind != ElementKind.METHOD) {
+                                //TODO maybe throw exception if annotation is not on a method
+                                return;
                             }
+                            val methodName = (element as ExecutableElement).simpleName.toString();
+                            val parameters = element.parameters;
 
                             var sourceFile = FileUtils.getSourceFile(processingEnv.filer,
                                     packageFromQualifiedName(typeElement.qualifiedName.toString()),
@@ -53,8 +55,30 @@ class Processor : AbstractProcessor() {
                             var traverser = ASTTraverser();
                             val cu = traverser.loadClassFromSource(sourceFile);
 
+                            var methodDeclaration : MethodDeclaration? = null;
+                            //TODO extract this to a function
+                            cu.second.methods.forEach(fun (method: MethodDeclaration) {
+                                if (method.nameAsString == methodName) {
+                                    var allContains = true
+                                    if (allParametersAreEqual(method.parameters, parameters)) {
+                                        methodDeclaration = method;
+                                    }
+                                }
+                            })
+                            if (methodDeclaration == null) {
+                                //TODO throw exception
+                                return;
+                            }
+                            val existingAxiomsForClass = axiomDeclarations.getOrDefault(typeElement.qualifiedName.toString(),
+                                    ArrayList());
+                            axiomDeclarations[typeElement.qualifiedName.toString()] = existingAxiomsForClass.plus(
+                                    AxiomDefinition(
+                                            methodDeclaration!!,
+                                            typeElement.qualifiedName.toString()
+                                    )
+                            )
+
                             val pathToObject = traverser.getPathToObject(cu.first, cu.second);
-                            println(pathToObject)
 
                             FileUtils.generateTestClass(
                                     processingEnv.filer,
@@ -70,7 +94,28 @@ class Processor : AbstractProcessor() {
 
             }
         )
+
+        TestClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer);
+
         return false;
+    }
+
+    private fun allParametersAreEqual(parameters: NodeList<Parameter>?, parameters1: List<VariableElement>): Boolean {
+        if (parameters == null) {
+            return false;
+        }
+        if (parameters.size != parameters1.size) {
+            return false;
+        }
+        for (i in 0 until parameters.size) {
+            var p = parameters1[i].asType().toString().split(".").last(); //TODO: maybe not do this so hacky
+            val p1 = parameters[i].type.toString()
+            if (p1 != p) {
+                return false;
+            }
+        }
+        return true;
+
     }
 
     private fun packageFromQualifiedName(qualifiedName: String): String {

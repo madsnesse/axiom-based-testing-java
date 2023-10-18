@@ -11,8 +11,6 @@ class FileUtils () {
 
     //static function
     companion object {
-
-
         fun getSourceFile(filer: Filer, packageName: String, fileName: String): String {
             var fileObject = filer.getResource(StandardLocation.SOURCE_PATH, packageName, fileName);
             var s = ""
@@ -30,24 +28,11 @@ class FileUtils () {
             return s
         }
 
-        fun generateTestClass(filer: Filer,
-                              imports: List<ImportDeclaration>,
-                              methods: List<MethodDeclaration>,
-                              nameOfClassToBeTested: String) {
-
-            var cu: CompilationUnit = CompilationUnit("no.uib.ii.jaxioms");
-            imports.forEach(fun(import: ImportDeclaration) {
-                cu.addImport(import)
-            })
-            var classDeclaration = cu.addClass("GeneratedTestClass${nameOfClassToBeTested}")
-            methods.forEach(fun(method: MethodDeclaration) {
-                classDeclaration.addMember(method)
-            })
-            println(cu.toString())
-            filer.createSourceFile("no.uib.ii.jaxioms.GeneratedTestClass${nameOfClassToBeTested}").openWriter().use { writer ->
-                writer.write(cu.toString())
+        fun saveFile(filer: Filer, packageName: String, fileName: String, content: String) {
+            var fileObject = filer.createResource(StandardLocation.SOURCE_OUTPUT, packageName, fileName);
+            fileObject.openOutputStream().use { outputStream ->
+                outputStream.write(content.toByteArray())
             }
-
         }
     }
 }
