@@ -4,6 +4,7 @@ import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.ImportDeclaration
 import com.github.javaparser.ast.body.MethodDeclaration
 import no.uib.ii.AxiomDefinition
+import java.io.File
 import java.util.HashMap
 import javax.annotation.processing.Filer
 
@@ -19,29 +20,60 @@ class TestClassGenerator {
         }
 
         private fun generateTestClass(filer: Filer,
-                                  axiomDeclarations: List<AxiomDefinition>) {
+                                  className: String,
+                                      axiomDeclarations: List<AxiomDefinition>) {
 
-                var cu: CompilationUnit = CompilationUnit("no.uib.ii.jaxioms");
+            var cu: CompilationUnit = CompilationUnit("no.uib.ii.jaxioms");
 
-                val imports = resolveImports(axiomDeclarations);
-                val methods: List<MethodDeclaration> = listOf()
+            val imports = resolveImports(axiomDeclarations);
+            val methods: List<MethodDeclaration> = axiomDeclarations.map { axiomDeclaration -> axiomDeclaration.getMethod() }
 
             imports.forEach(fun(import: ImportDeclaration) {
                     cu.addImport(import)
                 })
-                var classDeclaration = cu.addClass("GeneratedTestClass${nameOfClassToBeTested}")
+                val className = className.split(".").last();
+                var classDeclaration = cu.addClass("GeneratedTestClass${className}")
                 methods.forEach(fun(method: MethodDeclaration) {
-                    classDeclaration.addMember(method)
+                    classDeclaration.addMember(
+                            MethodDeclaration().setBody(method.body.orElseThrow())
+                                    .setType(method.type)
+                                    .setName(method.name)
+                                    .setParameters(method.parameters)
+                                    .setModifiers(method.modifiers)
+                                    .setThrownExceptions(method.thrownExceptions)
+                                    .addAnnotation("Test")
+                    )
                 })
                 println(cu.toString())
-                filer.createSourceFile("no.uib.ii.jaxioms.GeneratedTestClass${nameOfClassToBeTested}").openWriter().use { writer ->
+
+                //TODO check if exists
+                val f : File = File("target/generated-sources/annotations/no/uib/ii/jaxioms/GeneratedTestClass${className}.java");
+                if (f.exists()) {
+                    f.delete();
+                }
+            //TODO create in test folder
+
+                filer.createSourceFile("no.uib.ii.jaxioms.GeneratedTestClass${className}").openWriter().use { writer ->
                     writer.write(cu.toString())
                 }
 
             }
 
         private fun resolveImports(axiomDeclarations: List<AxiomDefinition>): List<ImportDeclaration> {
-            TODO("Not yet implemented")
+
+            val list = mutableListOf<ImportDeclaration>();
+            list += (ImportDeclaration("org.junit.jupiter.api.Assertions.assertEquals", true, false));
+            list += (ImportDeclaration("org.junit.jupiter.api.Test", false, false));
+            axiomDeclarations.forEach { axDef ->
+                axDef.getMethod().parameters.forEach { parameter ->
+                    //TODO resolve import for custom types
+                    //TODO use parameter.type.resolve() maybe
+
+                }
+
+            }
+
+            return list;
         }
     }
 }

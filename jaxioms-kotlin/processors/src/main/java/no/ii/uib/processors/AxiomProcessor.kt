@@ -6,6 +6,7 @@ import com.github.javaparser.ast.ImportDeclaration
 import com.github.javaparser.ast.NodeList
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.body.Parameter
+import no.uib.ii.AxiomDefinition
 import javax.annotation.processing.*
 import javax.annotation.processing.Processor
 import javax.lang.model.SourceVersion
@@ -73,19 +74,9 @@ class AxiomProcessor : AbstractProcessor() {
                                     ArrayList());
                             axiomDeclarations[typeElement.qualifiedName.toString()] = existingAxiomsForClass.plus(
                                     AxiomDefinition(
-                                            methodDeclaration!!,
-                                            typeElement.qualifiedName.toString()
+                                            methodDeclaration!!
                                     )
                             )
-
-                            val pathToObject = traverser.getPathToObject(cu.first, cu.second);
-
-                            FileUtils.generateTestClass(
-                                    processingEnv.filer,
-                                    getImports(),
-                                    getMethods(),
-                                    typeElement.simpleName.toString()
-                            );
 
                         }
                 )

@@ -23,7 +23,7 @@ public class Position extends ArrayList<String> {
      * Adds the given position to this position.
      * @param p
      */
-    void add(Position p) {
+    public void add(Position p) {
         this.x += p.x;
         this.y += p.y;
     }
