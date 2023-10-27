@@ -51,7 +51,7 @@ class TestClassGenerator {
                 if (f.exists()) {
                     f.delete();
                 }
-            //TODO create in test folder
+                //TODO create in test folder instead
 
                 filer.createSourceFile("no.uib.ii.jaxioms.GeneratedTestClass${className}").openWriter().use { writer ->
                     writer.write(cu.toString())

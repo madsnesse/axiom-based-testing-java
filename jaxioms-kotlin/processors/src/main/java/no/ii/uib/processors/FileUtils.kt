@@ -13,6 +13,7 @@ class FileUtils () {
     companion object {
         fun getSourceFile(filer: Filer, packageName: String, fileName: String): String {
             var fileObject = filer.getResource(StandardLocation.SOURCE_PATH, packageName, fileName);
+            println(fileObject.toString())
             var s = ""
             try {
                 fileObject.openInputStream().use { inputStream ->

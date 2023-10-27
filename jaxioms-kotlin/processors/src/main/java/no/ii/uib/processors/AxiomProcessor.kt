@@ -88,7 +88,7 @@ class AxiomProcessor : AbstractProcessor() {
 
         TestClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer);
 
-        return false;
+        return true;
     }
 
     private fun allParametersAreEqual(parameters: NodeList<Parameter>?, parameters1: List<VariableElement>): Boolean {
