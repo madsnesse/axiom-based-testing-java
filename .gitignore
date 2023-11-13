@@ -7,3 +7,9 @@
 /jaxioms-kotlin/experiments/target/
 /jaxioms-kotlin/models/target/
 /jaxioms-kotlin/processors/target/
+=======
+.DS_STORE
+.idea/
+**/.idea/
+/**/target/
+/annotations/target/
