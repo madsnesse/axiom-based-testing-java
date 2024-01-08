@@ -24,25 +24,31 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-test-sources/t" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-test-sources/annotations" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: junit:junit:3.8.1" level="project" />
-    <orderEntry type="library" name="Maven: no.uib.ii:processors:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.google.auto.value:auto-value:1.10" level="project" />
-    <orderEntry type="library" name="Maven: no.uib.ii:models:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: no.uib.ii:annotations:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter:5.10.0" level="project" />
-    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter-api:5.10.0" level="project" />
-    <orderEntry type="library" name="Maven: org.opentest4j:opentest4j:1.3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.junit.platform:junit-platform-commons:1.10.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apiguardian:apiguardian-api:1.1.2" level="project" />
-    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter-params:5.10.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.junit.jupiter:junit-jupiter-engine:5.10.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.junit.platform:junit-platform-engine:1.10.0" level="project" />
     <orderEntry type="module" module-name="processors" />
+    <orderEntry type="library" name="Maven: no.ii.uib:models:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="generator" />
+    <orderEntry type="module" module-name="models" />
+    <orderEntry type="module" module-name="annotations" />
+    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter-engine:5.9.2" level="project" />
+    <orderEntry type="library" name="Maven: org.junit.platform:junit-platform-engine:1.9.2" level="project" />
+    <orderEntry type="library" name="Maven: org.opentest4j:opentest4j:1.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.junit.platform:junit-platform-commons:1.9.2" level="project" />
+    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter-api:5.9.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apiguardian:apiguardian-api:1.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-test:1.9.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.auto.value:auto-value:1.10" level="project" />
     <orderEntry type="library" name="Maven: com.github.javaparser:javaparser-core:3.25.5" level="project" />
     <orderEntry type="library" name="Maven: com.github.javaparser:javaparser-symbol-solver-core:3.25.5" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.29.2-GA" level="project" />
@@ -53,23 +59,5 @@
     <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:3.33.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.18.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:2.8" level="project" />
-    <orderEntry type="module" module-name="models" />
-    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter:5.10.1" level="project" />
-    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter-api:5.10.1" level="project" />
-    <orderEntry type="library" name="Maven: org.opentest4j:opentest4j:1.3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.junit.platform:junit-platform-commons:1.10.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apiguardian:apiguardian-api:1.1.2" level="project" />
-    <orderEntry type="library" name="Maven: org.junit.jupiter:junit-jupiter-params:5.10.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.junit.jupiter:junit-jupiter-engine:5.10.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.junit.platform:junit-platform-engine:1.10.1" level="project" />
-    <orderEntry type="module" module-name="annotations" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.9.10" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.9.10" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-test:1.9.10" level="project" />
-    <orderEntry type="library" name="Maven: com.google.auto.value:auto-value:1.10" level="project" />
-    <orderEntry type="module" module-name="generator" />
   </component>
 </module>

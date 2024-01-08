@@ -2,15 +2,15 @@ package org.example;
 
 import no.uib.ii.Axiom;
 import no.uib.ii.AxiomType;
-import no.uib.ii.Test;
 
 import java.util.Objects;
 
-import static junit.framework.Assert.assertEquals;
+import static no.uib.ii.StaticMethods.assertEquals;
+
 /**
  * A position in 2D space.
  */
-public class Position implements Test {
+public class Position {
 
     private int x;
     private int y;
@@ -18,6 +18,11 @@ public class Position implements Test {
     public Position(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public Position(Position p ) {
+        this.x = p.x;
+        this.y = p.y;
     }
 
 
@@ -37,15 +42,15 @@ public class Position implements Test {
      * @param c
      */
     @Axiom(type = AxiomType.REQUIRED)
-    public static void addIsAssociative(Position a, Position b, Position c) {
+    public static void addIsAssociative(Position a, Position b, Position c) { // TODO fix this
         Position aPlusB = a;
         aPlusB.add(b);
-        Position bPlusC = b;
+        Position bPlusC = b; //b + c
         bPlusC.add(c);
-        Position aPlusBPlusC = a;
+        Position aPlusBPlusC = aPlusB;
         aPlusBPlusC.add(c);
-        Position bPlusCPlusA = b;
-        bPlusCPlusA.add(a);
+        Position bPlusCPlusA = bPlusC;
+        bPlusCPlusA.add(a); // a + (b+c)
         assertEquals(aPlusBPlusC, bPlusCPlusA);
     }
 

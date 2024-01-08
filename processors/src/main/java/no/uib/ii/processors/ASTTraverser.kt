@@ -1,4 +1,4 @@
-package no.ii.uib.processors
+package no.uib.ii.processors
 
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.CompilationUnit
@@ -16,12 +16,17 @@ class ASTTraverser {
     fun loadClassFromSource(source: String) : Pair<CompilationUnit, ClassOrInterfaceDeclaration> {
         var result: ClassOrInterfaceDeclaration? = null;
         var cu : CompilationUnit? = null;
-        parser.parse(source).ifSuccessful(fun (c : CompilationUnit) {
+        println(source)
+        var parseResult = parser.parse(source)
+        parseResult.ifSuccessful(fun (c : CompilationUnit) {
             cu = c;
             result = c.findFirst(ClassOrInterfaceDeclaration::class.java).orElse(null);
         })
 
         if (result == null || cu == null) {
+            parseResult.problems.forEach { problem ->
+                println(problem)
+            }
             throw Exception("Could not parse source")
         }
         return Pair(cu!!, result!!)

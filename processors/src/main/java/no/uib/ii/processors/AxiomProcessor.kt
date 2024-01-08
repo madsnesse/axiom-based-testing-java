@@ -1,10 +1,11 @@
-package no.ii.uib.processors
+package no.uib.ii.processors
 
 import autovalue.shaded.com.google.auto.service.AutoService
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.ImportDeclaration
 import com.github.javaparser.ast.NodeList
 import com.github.javaparser.ast.body.MethodDeclaration
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
 import com.github.javaparser.ast.body.Parameter
 import no.uib.ii.AxiomDefinition
 import no.uib.ii.DataGenerator
@@ -14,7 +15,7 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.*
 
 
-@SupportedAnnotationTypes("no.uib.ii.Axiom", "no.uib.ii.Generator")
+@SupportedAnnotationTypes("no.uib.ii.Axiom")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor::class)
 class AxiomProcessor : AbstractProcessor() {
@@ -35,6 +36,7 @@ class AxiomProcessor : AbstractProcessor() {
     }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
+        var hasGenerated = false;
         annotations?.forEach(
             fun(annotation) {
                 roundEnv?.getElementsAnnotatedWith(annotation)?.forEach(
@@ -50,17 +52,19 @@ class AxiomProcessor : AbstractProcessor() {
                             val methodName = (element as ExecutableElement).simpleName.toString();
                             val parameters = element.parameters;
 
-                            var sourceFile = FileUtils.getSourceFile(processingEnv.filer,
-                                    packageFromQualifiedName(typeElement.qualifiedName.toString()),
-                                    classFromQualifiedName(typeElement.qualifiedName.toString()));
+                            var sourceFile = FileUtils.getSourceFile(
+                                processingEnv.filer,
+                                packageFromQualifiedName(typeElement.qualifiedName.toString()),
+                                classFromQualifiedName(typeElement.qualifiedName.toString())
+                            );
 
                             var traverser = ASTTraverser();
                             val cu = traverser.loadClassFromSource(sourceFile);
 
                             var methodDeclaration : MethodDeclaration? = null;
                             //TODO extract this to a function
-
-                            var d = DataGenerator.generateGeneratorForClass(cu.second)
+                            //var decl : ClassOrInterfaceDeclaration = cu.second;
+                            //var d = DataGenerator.generateGeneratorForClass(decl);
 
                             cu.second.methods.forEach(fun (method: MethodDeclaration) {
                                 if (method.nameAsString == methodName) {
@@ -81,6 +85,7 @@ class AxiomProcessor : AbstractProcessor() {
                                             methodDeclaration!!
                                     )
                             )
+                            hasGenerated = true;
 
                         }
                 )
@@ -90,7 +95,9 @@ class AxiomProcessor : AbstractProcessor() {
             }
         )
 
-            TestClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer);
+        if (hasGenerated){
+            TestClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer)
+        };
 
         return true;
     }

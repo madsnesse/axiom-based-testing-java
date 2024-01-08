@@ -1,24 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>no.uib.ii</groupId>
+        <artifactId>jaxioms-kotlin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
-  <groupId>org.example</groupId>
-  <artifactId>experiments</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+    <artifactId>experiments</artifactId>
+    <packaging>jar</packaging>
 
-  <name>experiments</name>
-  <url>http://maven.apache.org</url>
+    <name>experiments</name>
+    <url>http://maven.apache.org</url>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-    </dependency>
     <dependency>
       <groupId>no.uib.ii</groupId>
       <artifactId>processors</artifactId>
@@ -37,13 +35,26 @@
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>RELEASE</version>
-      <scope>compile</scope>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.9.2</version>
     </dependency>
   </dependencies>
   <build>
+    <testSourceDirectory>
+      ${project.build.directory}/generated-sources
+    </testSourceDirectory>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M5</version> <!-- Adjust version as needed -->
+        <configuration>
+          <!-- Other configurations -->
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+        </configuration>
+      </plugin>
       <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-compiler-plugin</artifactId>
@@ -52,94 +63,12 @@
         <target>17</target>
         <source>17</source>
         <annotationProcessors>
-          <annotationProcessor>no.uib.ii.processors.AxiomProcessor</annotationProcessor>
-          <annotationProcessor>no.uib.ii.processors.GeneratorProcessor</annotationProcessor>
+          <annotationProcessor>no.uib.ii.processors.AxiomProcessor
+          </annotationProcessor>
         </annotationProcessors>
       </configuration>
     </plugin>
+
     </plugins>
   </build>
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>no.ii.uib</groupId>
-        <artifactId>jaxioms-kotlin</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>experiments</artifactId>
-    <packaging>jar</packaging>
-
-    <name>experiments</name>
-    <url>http://maven.apache.org</url>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>no.ii.uib</groupId>
-            <artifactId>processors</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.ii.uib</groupId>
-            <artifactId>annotations</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jvmTarget>1.8</jvmTarget>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <target>17</target>
-                    <source>17</source>
-                    <annotationProcessors>
-                        <annotationProcessor>no.ii.uib.processors.AxiomProcessor</annotationProcessor>
-
-                    </annotationProcessors>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

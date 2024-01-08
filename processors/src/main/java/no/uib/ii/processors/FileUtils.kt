@@ -1,4 +1,4 @@
-package no.ii.uib.processors
+package no.uib.ii.processors
 
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.ImportDeclaration
@@ -9,22 +9,23 @@ import javax.tools.StandardLocation
 
 class FileUtils () {
 
-    //static function
     companion object {
         fun getSourceFile(filer: Filer, packageName: String, fileName: String): String {
-            var fileObject = filer.getResource(StandardLocation.SOURCE_PATH, packageName, fileName);
-            println(fileObject.toString())
             var s = ""
             try {
-                fileObject.openInputStream().use { inputStream ->
+               var fileObject = filer.getResource(StandardLocation.SOURCE_PATH, packageName, fileName);
+               println(fileObject.toString())
+
+
+               fileObject.openInputStream().use { inputStream ->
                     inputStream.reader().use { reader ->
                         reader.forEachLine { line ->
-                            s += line
+                            s += line + "\n"
                         }
                     }
                 }
             } catch (e: Exception) {
-                println(fileObject.toUri().toString()) //TODO handle exception
+                println(packageName + fileName) //TODO handle exception
             }
             return s
         }

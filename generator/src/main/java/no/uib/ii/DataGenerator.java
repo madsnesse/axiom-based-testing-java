@@ -9,6 +9,8 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.type.Type;
 import no.uib.ii.annotation.DefinedGenerator;
 import no.uib.ii.defaultgenerators.Generator;
+import no.uib.ii.parser.Parser;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -130,6 +132,47 @@ public class DataGenerator {
 //        return null;
 //    }
 
+    public static String generateGeneratorForClass(Class<?> clazz) {
+        for (Constructor<?> constructor: clazz.getConstructors()) {
+            Class<?>[] parameters = constructor.getParameterTypes();
+            Object[] args = new Object[parameters.length];
+            List<Generator> generators = new ArrayList<>();
+            for (Class<?> p : parameters) {
+                Generator<?> generator = null;
+                try {
+                    generator = getGeneratorForClass(p);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                if (generator == null) {
+                    throw new RuntimeException("No generator found for " + p.getName());
+                }
+                generators.add(generator);
+            }
+            JavaParser parser = new JavaParser();
+            CompilationUnit cu = new CompilationUnit();
+            ClassOrInterfaceDeclaration generatorClass = new ClassOrInterfaceDeclaration();
+            generatorClass.addExtendedType(Generator.class);
+            generatorClass.setName(clazz.getName() + "Generator");
+            generatorClass.addAnnotation(DefinedGenerator.class);
+            ConstructorDeclaration constructorDeclaration = generatorClass.addConstructor(Modifier.Keyword.PUBLIC);
+
+            constructorDeclaration.setName(generatorClass.getName());
+
+            String blockStatement = String.format("return new %s(%s);", clazz.getName(), String.join(",", generators.stream().map(g -> g.getClass().getSimpleName().toLowerCase() + ".generate()").toArray(String[]::new)));
+
+
+
+
+
+
+            cu.addType(generatorClass);
+
+            return cu.toString();
+        }
+        return null;
+    }
+
     public static String generateGeneratorForClass(ClassOrInterfaceDeclaration clazz) {
 
         for (ConstructorDeclaration constructor: clazz.getConstructors()) {
@@ -142,8 +185,11 @@ public class DataGenerator {
                 generators.add(generator);
             }
 
+            ClassOrInterfaceDeclaration declaration = new GeneratorBuilder()
+                    .addImports(ImportResolver.resolveImports(clazz))
+                    .setName(clazz.getName() + "Generator")
 
-
+                    .build();
             JavaParser parser = new JavaParser();
             CompilationUnit cu = new CompilationUnit();
             ClassOrInterfaceDeclaration generatorClass = new ClassOrInterfaceDeclaration();
@@ -161,7 +207,7 @@ public class DataGenerator {
                 constructorDeclaration.addParameter(g.getClass(), varName);
                 blockStatement += varName+".generate(),";
             }
-
+            constructorDeclaration.setBody(Parser.parseOrException(parser.parseBlock(blockStatement), "Could not parse block statement"));
 
             cu.addType(generatorClass);
 
@@ -169,6 +215,20 @@ public class DataGenerator {
         }
         return null;
     }
+
+    public static Generator<?> getGeneratorForClass(Class<?> aClass) throws ClassNotFoundException {
+        System.out.println(aClass);
+
+
+        switch (aClass.getName()) {
+            case ("int"), ("java.lang.Integer"):
+                return instantiateGenerator(availableGenerators.get(Integer.class));
+            case ("java.lang.String"), ("java.lang.StringBuffer"):
+                return instantiateGenerator(availableGenerators.get(String.class));
+        }
+
+            return instantiateGenerator(availableGenerators.get(Class.forName(aClass.toString())));
+        }
 
     private static Generator<?> getGeneratorForClass(Type aClass) {
         System.out.println(aClass);
@@ -204,5 +264,9 @@ public class DataGenerator {
     public static void main(String[] args) {
         String generatorFile = generateGeneratorForClass(new JavaParser().parse("class A { public A(int i) {} }").getResult().get().getClassByName("A").get().asClassOrInterfaceDeclaration());
         System.out.println(generatorFile);
+    }
+
+    public static boolean hasGeneratorForClass(@NotNull Class<?> get) {
+        return availableGenerators.containsKey(get);
     }
 }
