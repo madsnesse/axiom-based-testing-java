@@ -1,0 +1,19 @@
+package no.uib.ii.generators;
+import no.uib.ii.defaultgenerators.Generator;
+import no.uib.ii.defaultgenerators.IntegerGenerator;
+import no.uib.ii.annotation.DefinedGenerator;
+import org.example.Position;
+
+import java.util.Random;
+
+@DefinedGenerator()
+public class PositionGenerator extends Generator<Position> {
+    public PositionGenerator() { //TODO change template to be for generic name
+        super(new Random());
+    }
+
+    @Override
+    public Position generate() {
+        return null;
+    }
+}

@@ -15,6 +15,7 @@
     <module>annotations</module>
     <module>processors</module>
     <module>experiments</module>
+      <module>common</module>
   </modules>
 
   <properties>

@@ -2,6 +2,7 @@ package org.example;
 
 import no.uib.ii.Axiom;
 import no.uib.ii.AxiomType;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.Objects;
 
@@ -43,9 +44,9 @@ public class Position {
      */
     @Axiom(type = AxiomType.REQUIRED)
     public static void addIsAssociative(Position a, Position b, Position c) { // TODO fix this
-        Position aPlusB = a;
+        Position aPlusB = a.deepCopy();
         aPlusB.add(b);
-        Position bPlusC = b; //b + c
+        Position bPlusC = b.deepCopy(); //b + c
         bPlusC.add(c);
         Position aPlusBPlusC = aPlusB;
         aPlusBPlusC.add(c);
@@ -67,8 +68,20 @@ public class Position {
         return Objects.hash(x, y);
     }
 
+    @Override
+    public String toString() {
+        return String.format("{%s, %s}", x, y);
+    }
+
     public static void main(String[] args) {
         Position p = new Position(1,2);
-        System.out.println(p.equals(null));
+        Position q = new Position(2,3);
+        Position r = new Position(3,4);
+        addIsAssociative(p,q,r);
     }
+
+    public Position deepCopy() {
+        return new Position(this.x, this.y);
+    }
+
 }

@@ -9,6 +9,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
 import com.github.javaparser.ast.body.Parameter
 import no.uib.ii.AxiomDefinition
 import no.uib.ii.DataGenerator
+import no.uib.ii.FileUtils
 import javax.annotation.processing.*
 import javax.annotation.processing.Processor
 import javax.lang.model.SourceVersion

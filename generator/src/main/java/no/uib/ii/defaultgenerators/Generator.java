@@ -4,10 +4,13 @@ import java.util.Random;
 
 public abstract class Generator<T>{
 
-    Random random;
+    public Random random;
 
     public abstract T generate();
 
+    public Generator() {
+        this.random = new Random();
+    }
     public Generator(Random r) {
         this.random = r;
     }

@@ -1,9 +1,5 @@
-package no.uib.ii.processors
+package no.uib.ii
 
-import com.github.javaparser.ast.CompilationUnit
-import com.github.javaparser.ast.ImportDeclaration
-import com.github.javaparser.ast.body.MethodDeclaration
-import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Filer
 import javax.tools.StandardLocation
 
