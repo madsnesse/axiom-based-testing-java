@@ -1,4 +1,4 @@
-package no.uib.ii;
+package no.uib.ii.annotations;
 
 
 import java.lang.annotation.ElementType;

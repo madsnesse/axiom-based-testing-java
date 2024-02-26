@@ -10,31 +10,24 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
-import no.uib.ii.annotation.DefinedGenerator;
 import no.uib.ii.defaultgenerators.Generator;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.processing.Filer;
-import javax.xml.crypto.Data;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
-
-import static no.uib.ii.parser.CommonParserMethods.parseOrException;
 
 public class DataGenerator {
 
+    private static final String CLASS_NAME_IN_TEMPLATE = "CLASS_NAME";
     private static final Random r = new Random();
-    private static Map<Class<?>, Class<? extends Generator>> availableGenerators = GeneratorFinder.defaultGenerators();
+        private static Map<Class<?>, Class<? extends Generator>> availableGenerators = GeneratorFinder.defaultGenerators();
     public String generateGeneratorForClass(ClassOrInterfaceDeclaration clazz, Filer filer) {
-
+        if (clazz.getConstructors().isEmpty()) {
+            return generateGeneratorEmptyConstructor(clazz, filer);
+        }
         for (ConstructorDeclaration constructor: clazz.getConstructors()) {
             Iterator<Parameter> parameters = constructor.getParameters().iterator();
 
@@ -51,7 +44,7 @@ public class DataGenerator {
 //                    .setName(clazz.getName() + "Generator")
 //
 //                    .build();
-            CompilationUnit cu = loadGeneratorTemplate(filer);
+            CompilationUnit cu = loadGeneratorTemplateReplaceClassName(filer, CLASS_NAME_IN_TEMPLATE, clazz.getName().asString());
 
             ClassOrInterfaceDeclaration generatorClass = null;
             for (Node n : cu.getChildNodes()) {
@@ -86,14 +79,50 @@ public class DataGenerator {
             generateStatement.addStatement(generateStatements);
             var method = generatorClass.getMethodsByName("generate");
             method.get(0).setBody(generateStatement);
+
+            cu.addImport( clazz.getFullyQualifiedName().get());
+
             return cu.toString();
         }
         return null;
     }
 
-    private static CompilationUnit loadGeneratorTemplate(Filer filer) {
+    private String generateGeneratorEmptyConstructor(ClassOrInterfaceDeclaration clazz, Filer filer) {
+
+        CompilationUnit cu = loadGeneratorTemplateReplaceClassName(filer, CLASS_NAME_IN_TEMPLATE, clazz.getName().asString());
+        ClassOrInterfaceDeclaration generatorClass = null;
+        for (Node n : cu.getChildNodes()) {
+            if (n instanceof ClassOrInterfaceDeclaration c) {
+                generatorClass = c;
+            }
+        }
+        generatorClass.setName(clazz.getName() + "Generator");
+
+        BlockStmt generateStatement = new BlockStmt();
+        generateStatement.addStatement("return new " + clazz.getName() + "();");
+        var generateMethod = generatorClass.getMethodsByName("generate");
+        generateMethod.get(0).setBody(generateStatement);
+        var generatorConstructor = generatorClass.getConstructors().get(0);
+        generatorConstructor.setName(clazz.getName()+"Generator");
+        cu.addImport(clazz.getFullyQualifiedName().get());
+
+        generatorClass.getExtendedTypes().forEach(t ->{
+            System.out.println((t));
+            }
+        );
+
+        return cu.toString();
+    }
+
+    private static CompilationUnit loadGeneratorTemplateReplaceClassName(Filer filer, String oldName, String newName) {
         var d = DataGenerator.class.getClassLoader().getResourceAsStream("Generator_Template");
-        return StaticJavaParser.parse(d);
+        try {
+            var s = new String(d.readAllBytes());
+
+            return StaticJavaParser.parse(s.replace(oldName, newName));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 //        FileUtils.Companion.getSourceFile(filer, "", "Generator_Template");
 //        URL path = DataGenerator.class.getClassLoader().getResource("Generator_Template");
 //        if (path == null) {
@@ -128,20 +157,18 @@ public class DataGenerator {
 
     private static Generator<?> getGeneratorForClass(Type aClass) {
         System.out.println(aClass);
-        if (aClass.isPrimitiveType()) {
-            switch (aClass.asString()) {
-                case ("int"):
-                    return instantiateGenerator(availableGenerators.get(Integer.class));
-                    //TODO fill in
-            }
-        } else {
-            try {
-                return instantiateGenerator(availableGenerators.get(Class.forName(aClass.asString())));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+        switch (aClass.asString()) {
+            case ("int"):
+                return instantiateGenerator(availableGenerators.get(Integer.class));
+            //TODO fill in
+            case ("String"):
+                return instantiateGenerator(availableGenerators.get(String.class));
         }
-        return null;
+        try {
+            return instantiateGenerator(availableGenerators.get(Class.forName(aClass.asString())));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static Generator<?> instantiateGenerator(Class<? extends Generator> generatorClass) {

@@ -1,0 +1,1 @@
+[{"method":"@Axiom\nstatic <T extends Group<T>> void associativeBinaryOperation(T a, T b, T c) {\n    //TODO fix with deepcopy\n    T aCp = a;\n    assertEquals(a.binaryOperation(b).binaryOperation(c), a.binaryOperation(b.binaryOperation(c)));\n}","isGeneric":true}]

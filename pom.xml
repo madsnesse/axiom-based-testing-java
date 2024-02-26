@@ -12,7 +12,6 @@
   <modules>
     <module>generator</module>
     <module>models</module>
-    <module>annotations</module>
     <module>processors</module>
     <module>experiments</module>
       <module>common</module>

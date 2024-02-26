@@ -1,19 +1,16 @@
-package no.uib.ii.processors
+package no.uib.ii
 
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.CompilationUnit
+import com.github.javaparser.ast.NodeList
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
 import com.github.javaparser.ast.type.ClassOrInterfaceType
-import com.github.javaparser.resolution.TypeSolver
-import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver
-import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver
-import java.util.Objects
 
 class ASTTraverser {
 
-    val parser = JavaParser();
+    private val parser = JavaParser();
 
-    fun loadClassFromSource(source: String) : Pair<CompilationUnit, ClassOrInterfaceDeclaration> {
+    fun loadClassFromSource(source: String) : Pair<CompilationUnit, ClassOrInterfaceDeclaration> { //TODO trenger vi CompilationUnit her, kan endre til å returnere second
         var result: ClassOrInterfaceDeclaration? = null;
         var cu : CompilationUnit? = null;
         println(source)
@@ -26,7 +23,7 @@ class ASTTraverser {
         if (result == null || cu == null) {
             parseResult.problems.forEach { problem ->
                 println(problem)
-            }
+            } //TODO fiks denne
             throw Exception("Could not parse source")
         }
         return Pair(cu!!, result!!)

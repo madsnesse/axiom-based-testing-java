@@ -1,4 +1,4 @@
-package no.uib.ii;
+package no.uib.ii.annotations;
 
 /*
 * indicates that the annotated method is an axiom for the class with the given name

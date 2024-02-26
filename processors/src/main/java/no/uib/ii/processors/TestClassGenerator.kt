@@ -8,7 +8,8 @@ import com.github.javaparser.ast.body.BodyDeclaration
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.body.Parameter
-import com.github.javaparser.ast.stmt.BlockStmt
+import com.github.javaparser.ast.type.ClassOrInterfaceType
+import no.uib.ii.ASTTraverser
 import no.uib.ii.AxiomDefinition
 import no.uib.ii.DataGenerator
 import no.uib.ii.FileUtils
@@ -17,29 +18,39 @@ import java.io.File
 import java.lang.Exception
 import java.util.Optional
 import javax.annotation.processing.Filer
+import javax.annotation.processing.FilerException
 import kotlin.collections.HashMap
 
 class TestClassGenerator {
     companion object {
         private val dataGenerator = DataGenerator()
         private val parser = JavaParser();
-        fun generateTestClassesForAxioms(axiomDeclarations: HashMap<String, List<AxiomDefinition>>, filer: Filer?) {
+        fun generateTestClassesForAxioms(axiomDeclarations: Map<String, List<AxiomDefinition>>, filer: Filer?) {
 
             var generators: Map<String, List<String>> = getGeneratorsForAxioms(filer!!, axiomDeclarations);
 
             for (axiomDeclaration in axiomDeclarations) {
-                generateTestClass(filer!!, axiomDeclaration.key, axiomDeclaration.value, generators[axiomDeclaration.key]!!)
+                if (generators.containsKey(axiomDeclaration.key)) {
+                    generateTestClass(
+                        filer!!,
+                        axiomDeclaration.key,
+                        axiomDeclaration.value,
+                        generators[axiomDeclaration.key]!!
+                    )
+                }
             }
 
 
         }
 
-        private fun getGeneratorsForAxioms(filer : Filer, axiomDeclarations: HashMap<String, List<AxiomDefinition>>): Map<String, List<String>> {
+        private fun getGeneratorsForAxioms(filer : Filer, axiomDeclarations: Map<String, List<AxiomDefinition>>): Map<String, List<String>> {
             var result = HashMap<String, List<String>>()
             for ((className,axiomDefinitions) in axiomDeclarations){
                 var generators = ArrayList<String>()
                 for (axiomDeclaration in axiomDefinitions) {
-                    val requiredClasses = getRequiredClasses(axiomDeclaration.getMethod())
+                    if (axiomDeclaration.isGeneric()) continue;
+                    val requiredClasses = getRequiredClasses(axiomDeclaration)
+                    if (axiomDeclaration.isGeneric()) continue;
                     requiredClasses.forEach { requiredClass ->
                         val clazz = getClassFromClassName(requiredClass);
                         if(clazz.isPresent){
@@ -49,7 +60,7 @@ class TestClassGenerator {
                                 generators.add(generator.name)
                             }
                             //generators.add(DataGenerator.generateGeneratorForClass(clazz.get()))
-                        } else {
+                        } else { //Check if it is a type
                             val fileName = requiredClass.split(".").last() + ".java"
                             val packageName = requiredClass.split(".").dropLast(1).joinToString(".")
                             val c = FileUtils.getSourceFile(filer, packageName, fileName)
@@ -61,14 +72,24 @@ class TestClassGenerator {
                             }
                             //TODO create in test folder instead
                             var gen = getDataGenerator(cd, filer);
-                            filer.createSourceFile("no.uib.ii.jaxioms.generators.${cd.nameAsString}Generator").openWriter().use { writer ->
-                                writer.write(gen.toString())
+                            gen.ifPresent{ gen ->
+                                var g = gen.getType(0);
+                                if (!generators.any { s -> s.equals(g.fullyQualifiedName.get()) }) {
+                                    generators.add(gen.getType(0).fullyQualifiedName.get())
+                                    try {
+                                        filer.createSourceFile("no.uib.ii.jaxioms.generators.${cd.nameAsString}Generator")
+                                            .openWriter().use { writer ->
+                                                writer.write(gen.toString())
+                                            }
+                                    } catch (e: FilerException){
+                                        //TODO
+                                    }
+                                }
                             }
-                            generators.add(gen.getType(0).fullyQualifiedName.get())
                         }
                     }
                 }
-                result[className] = generators
+                if (generators.isNotEmpty()) result[className] = generators
             }
 
             return result;
@@ -84,24 +105,53 @@ class TestClassGenerator {
             }
         }
 
-        private fun getRequiredClasses(method: MethodDeclaration): List<String> {
+        private fun getRequiredClasses(method: AxiomDefinition): List<String> {
             var result = HashSet<String>()
-            method.parameters.forEach { parameter ->
-                result.add(resolveName(parameter))
+            method.getMethod().parameters.forEach { parameter ->
+                if (!isTypeParameter(parameter)) {
+                    result.add(resolveName(parameter))
+                } else {
+                    method.setGeneric(true)
+                }
             }
             return result.toList();
 
         }
 
-        private fun resolveName(param: Parameter): String {
-            val m = param.parentNode.get() as MethodDeclaration
-            val c = m.parentNode.get() as ClassOrInterfaceDeclaration
-            val p = c.parentNode.get() as CompilationUnit
-            return if (p.packageDeclaration.isPresent) {
-                p.packageDeclaration.get().nameAsString + "." + param.type.asString()
-            }else {
-                param.type.asString()
+        private fun isTypeParameter(parameter: Parameter?): Boolean {
+
+            var b = parameter?.parentNode?.ifPresent { m ->
+                var parentClass = m.parentNode.ifPresent { c ->
+                    c as ClassOrInterfaceDeclaration
+                    var tp = parameter.type as ClassOrInterfaceType
+                    if (c.typeParameters.any { it.name.equals(tp.name) }) {
+                        true
+                    }
+                    false
+                }
             }
+            return false
+        }
+
+        private fun resolveName(param: Parameter): String {
+//            val m = param.parentNode.get() as MethodDeclaration
+//            val c = m.parentNode.get() as ClassOrInterfaceDeclaration
+//            val p = c.parentNode.get() as CompilationUnit
+            var name = param.type.asString()
+            var packagename = ""
+            param.parentNode.ifPresent { m ->
+                (m as MethodDeclaration).parentNode.ifPresent { c ->
+                    (c as ClassOrInterfaceDeclaration).parentNode.ifPresent { p ->
+                        (p as CompilationUnit).packageDeclaration.ifPresent {
+                            packagename = it.nameAsString + "."
+                        }
+                    }
+                }
+            }
+            if (packagename != "" && !name.contains(packagename)) {
+                return packagename + name
+            }
+            return name
         }
 
         private fun getDebugMethod() : BodyDeclaration<*>? {
@@ -199,6 +249,7 @@ class TestClassGenerator {
 
             val list = mutableListOf<ImportDeclaration>();
             list += (ImportDeclaration("org.junit.jupiter.api.Assertions.assertEquals", true, false));
+            list += (ImportDeclaration("org.junit.jupiter.api.Assertions.assertTrue", true, false));
             list += (ImportDeclaration("org.junit.jupiter.params.ParameterizedTest", false, false));
             list += (ImportDeclaration("org.junit.jupiter.api.BeforeAll", false, false));
             list += (ImportDeclaration("org.junit.jupiter.params.provider.Arguments", false, false));
@@ -227,14 +278,14 @@ class TestClassGenerator {
             return list;
         }
 
-        private fun getDataGenerator(clazz: ClassOrInterfaceDeclaration, filer: Filer) : CompilationUnit {
+        private fun getDataGenerator(clazz: ClassOrInterfaceDeclaration, filer: Filer) : Optional<CompilationUnit> {
             val s = dataGenerator.generateGeneratorForClass(clazz, filer)
             val parseResult = parser.parse(s)
             if (!parseResult.isSuccessful) {
                 throw ParseException("Could not parse generated data generator")
             }
 
-            return parseResult.result.get();
+            return parseResult.result;
         }
     }
 }

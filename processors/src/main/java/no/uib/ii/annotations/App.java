@@ -1,4 +1,4 @@
-package no.uib.ii;
+package no.uib.ii.annotations;
 
 /**
  * Hello world!
