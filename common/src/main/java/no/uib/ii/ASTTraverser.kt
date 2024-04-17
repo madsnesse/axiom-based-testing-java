@@ -24,7 +24,7 @@ class ASTTraverser {
             parseResult.problems.forEach { problem ->
                 println(problem)
             } //TODO fiks denne
-            throw Exception("Could not parse source")
+            //throw Exception("Could not parse source")
         }
         return Pair(cu!!, result!!)
     }

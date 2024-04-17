@@ -26,5 +26,4 @@ public @interface Group {
     String inverse();
 
 
-
 }

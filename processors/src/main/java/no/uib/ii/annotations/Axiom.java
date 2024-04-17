@@ -9,6 +9,7 @@ import java.lang.annotation.*;
 public @interface Axiom {
 
     AxiomType type() default AxiomType.REQUIRED;
+
     int numberOfTestCases() default 100;
 
 }

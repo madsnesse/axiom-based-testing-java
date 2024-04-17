@@ -19,6 +19,7 @@ class FileUtils(private val filer: Filer) {
             d.forEach {
                 var o = JSONObject()
                 o.put("isGeneric", it.isGeneric())
+                o.put("qualifiedClassName", it.getQualifiedClassName())
                 o.put("method", it.getMethod().toString())
                 axiomDeclarations.put(o)
             }

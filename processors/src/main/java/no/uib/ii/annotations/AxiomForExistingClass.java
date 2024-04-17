@@ -1,8 +1,8 @@
 package no.uib.ii.annotations;
 
 /*
-* indicates that the annotated method is an axiom for the class with the given name
-*  */
+ * indicates that the annotated method is an axiom for the class with the given name
+ *  */
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

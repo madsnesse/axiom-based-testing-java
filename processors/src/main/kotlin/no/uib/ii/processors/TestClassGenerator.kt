@@ -15,11 +15,9 @@ import no.uib.ii.DataGenerator
 import no.uib.ii.FileUtils
 import no.uib.ii.parser.CommonParserMethods
 import java.io.File
-import java.lang.Exception
-import java.util.Optional
+import java.util.*
 import javax.annotation.processing.Filer
 import javax.annotation.processing.FilerException
-import kotlin.collections.HashMap
 
 class TestClassGenerator {
     companion object {
@@ -43,9 +41,12 @@ class TestClassGenerator {
 
         }
 
-        private fun getGeneratorsForAxioms(filer : Filer, axiomDeclarations: Map<String, List<AxiomDefinition>>): Map<String, List<String>> {
+        private fun getGeneratorsForAxioms(
+            filer: Filer,
+            axiomDeclarations: Map<String, List<AxiomDefinition>>
+        ): Map<String, List<String>> {
             var result = HashMap<String, List<String>>()
-            for ((className,axiomDefinitions) in axiomDeclarations){
+            for ((className, axiomDefinitions) in axiomDeclarations) {
                 var generators = ArrayList<String>()
                 for (axiomDeclaration in axiomDefinitions) {
                     if (axiomDeclaration.isGeneric()) continue;
@@ -53,7 +54,7 @@ class TestClassGenerator {
                     if (axiomDeclaration.isGeneric()) continue;
                     requiredClasses.forEach { requiredClass ->
                         val clazz = getClassFromClassName(requiredClass);
-                        if(clazz.isPresent){
+                        if (clazz.isPresent) {
                             if (DataGenerator.hasGeneratorForClass(clazz.get())) {
 //                                predefinedGenerators.add(DataGenerator.getGeneratorForClass(clazz.get()));
                                 val generator = DataGenerator.getGeneratorForClass(clazz.get()).javaClass
@@ -66,13 +67,14 @@ class TestClassGenerator {
                             val c = FileUtils.getSourceFile(filer, packageName, fileName)
                             val cd = ASTTraverser().loadClassFromSource(c).second
                             //TODO check if exists
-                            val f : File = File("target/generated-sources/annotations/no/uib/ii/jaxioms/generators/${cd.nameAsString}Generator.java");
+                            val f: File =
+                                File("target/generated-sources/annotations/no/uib/ii/jaxioms/generators/${cd.nameAsString}Generator.java");
                             if (f.exists()) {
                                 f.delete();
                             }
                             //TODO create in test folder instead
                             var gen = getDataGenerator(cd, filer);
-                            gen.ifPresent{ gen ->
+                            gen.ifPresent { gen ->
                                 var g = gen.getType(0);
                                 if (!generators.any { s -> s.equals(g.fullyQualifiedName.get()) }) {
                                     generators.add(gen.getType(0).fullyQualifiedName.get())
@@ -81,7 +83,7 @@ class TestClassGenerator {
                                             .openWriter().use { writer ->
                                                 writer.write(gen.toString())
                                             }
-                                    } catch (e: FilerException){
+                                    } catch (e: FilerException) {
                                         //TODO
                                     }
                                 }
@@ -95,7 +97,7 @@ class TestClassGenerator {
             return result;
         }
 
-        private fun getClassFromClassName(requiredClass: String): Optional<Class<* >> {
+        private fun getClassFromClassName(requiredClass: String): Optional<Class<*>> {
             return try {
                 val c = Class.forName(requiredClass);
                 Optional.of(c as Class<*>);
@@ -154,7 +156,7 @@ class TestClassGenerator {
             return name
         }
 
-        private fun getDebugMethod() : BodyDeclaration<*>? {
+        private fun getDebugMethod(): BodyDeclaration<*>? {
             var d = "   @BeforeAll\n" +
                     "    public static void t() {\n" +
                     "        System.out.println(\"fei8has\");\n" +
@@ -162,6 +164,7 @@ class TestClassGenerator {
 
             return CommonParserMethods.parseOrException(parser.parseMethodDeclaration(d), "error")
         }
+
         private fun getStreamMethod(className: String): BodyDeclaration<*>? {
 
             var s = "public static Stream<Arguments> method(){\n" +
@@ -170,7 +173,7 @@ class TestClassGenerator {
                     "        for (int i = 0; i < NUMBER_OF_CASES; i++) {\n" +
                     "            clazzStream.add(Arguments.of(clazzGenerator.generate(), clazzGenerator.generate(), clazzGenerator.generate()));\n" + //TODO dont have fixed number
                     "        }\n" +
-                    "        System.out.println(clazzStream); \n"+
+                    "        System.out.println(clazzStream); \n" +
                     "        return clazzStream.stream();\n" +
                     "    }"
             s = s.replace("Clazz", className)
@@ -189,25 +192,26 @@ class TestClassGenerator {
             var cu: CompilationUnit = CompilationUnit("annotations.no.uib.ii.jaxioms");
 
             val imports = resolveImports(className, axiomDeclarations, generators)
-            val methods: List<MethodDeclaration> = axiomDeclarations.map { axiomDeclaration -> axiomDeclaration.getMethod() }
+            val methods: List<MethodDeclaration> =
+                axiomDeclarations.map { axiomDeclaration -> axiomDeclaration.getMethod() }
 
             imports.forEach(fun(import: ImportDeclaration) {
-                    cu.addImport(import)
-                })
+                cu.addImport(import)
+            })
             val className = className.split(".").last();
 
             var classDeclaration = cu.addClass("${className}GeneratedTest");
             methods.forEach(fun(method: MethodDeclaration) {
                 classDeclaration.addMember(
-                        MethodDeclaration().setBody(method.body.orElseThrow())
-                                .setType(method.type)
-                                .setName(method.name)
-                                .setParameters(method.parameters)
-                                .setModifiers(method.modifiers)
-                                .setStatic(false) //TODO skriv om hvorfor static ikke fungerte, tester ble ikke oppdaget
-                                .setThrownExceptions(method.thrownExceptions)
-                                .addAnnotation("ParameterizedTest")
-                            .addSingleMemberAnnotation("MethodSource", "\"method\"")
+                    MethodDeclaration().setBody(method.body.orElseThrow())
+                        .setType(method.type)
+                        .setName(method.name)
+                        .setParameters(method.parameters)
+                        .setModifiers(method.modifiers)
+                        .setStatic(false) //TODO skriv om hvorfor static ikke fungerte, tester ble ikke oppdaget
+                        .setThrownExceptions(method.thrownExceptions)
+                        .addAnnotation("ParameterizedTest")
+                        .addSingleMemberAnnotation("MethodSource", "\"method\"")
                 )
             })
             classDeclaration.addMember(
@@ -229,7 +233,8 @@ class TestClassGenerator {
 //                println(cu.toString())
 
             //TODO check if exists
-            val f : File = File("target/generated-sources/annotations/no/uib/ii/jaxioms/GeneratedTestClass${className}.java");
+            val f: File =
+                File("target/generated-sources/annotations/no/uib/ii/jaxioms/GeneratedTestClass${className}.java");
             if (f.exists()) {
                 f.delete();
             }
@@ -278,7 +283,7 @@ class TestClassGenerator {
             return list;
         }
 
-        private fun getDataGenerator(clazz: ClassOrInterfaceDeclaration, filer: Filer) : Optional<CompilationUnit> {
+        private fun getDataGenerator(clazz: ClassOrInterfaceDeclaration, filer: Filer): Optional<CompilationUnit> {
             val s = dataGenerator.generateGeneratorForClass(clazz, filer)
             val parseResult = parser.parse(s)
             if (!parseResult.isSuccessful) {

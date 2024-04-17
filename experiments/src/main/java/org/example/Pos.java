@@ -5,9 +5,9 @@ import no.uib.ii.algebaric_structures.Groupoid;
 import no.uib.ii.annotations.Axiom;
 import no.uib.ii.annotations.InheritAxioms;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import static no.uib.ii.StaticMethods.assertTrue;
 
@@ -20,6 +20,7 @@ public class Pos implements Comparable<Pos>, Group<Pos> {
     public Pos(int x, int y) {
         this.x = x;
         this.y = y;
+        dataInvariant(this);
     }
 
     @Override
@@ -43,12 +44,32 @@ public class Pos implements Comparable<Pos>, Group<Pos> {
     }
 
     @Axiom //TODO kanskje datainvariant som egen annotasjon
-    public void dataInvariant(Pos p) {
-
+    public static void dataInvariant(Pos p) {
         assertTrue(p.x > 0 && p.x <= 100, "x should be between 0 and 100");
         assertTrue(p.y > 0 && p.y <= 100, "y should be between 0 and 100");
     }
 
+    @Override
+    public String toString() {
+        return "Pos{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+
+    @Override
+    public boolean equals(Object p) {
+        if (this == p) return true;
+        if (p == null) return false;
+        if (!(p instanceof Pos)) return false;
+        Pos pos = ((Pos) p);
+        return x == pos.x && y == pos.y;
+    }
 
 }
 

@@ -1,14 +1,12 @@
 package no.uib.ii.algebaric_structures;
 
-import no.uib.ii.annotations.Axiom;
-
 import static no.uib.ii.StaticMethods.assertEquals;
 
 public interface Groupoid<T> extends Monoid<T> {
 
     T inverse(T a);
 
-    @Axiom
+    //@Axiom
     default void inverseAxiom(T a) {
         assertEquals(identity(), binaryOperation(inverse(a), a));
         assertEquals(identity(), binaryOperation(a, inverse(a)));

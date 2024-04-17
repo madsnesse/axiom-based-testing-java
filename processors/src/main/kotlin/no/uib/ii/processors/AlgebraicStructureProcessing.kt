@@ -10,7 +10,11 @@ import javax.lang.model.element.*
 
 class AlgebraicStructureProcessing {
     companion object {
-        fun process(annotation: TypeElement, elementsAnnotatedWith: Set<Element>?, filer: Filer): Map<String, List<AxiomDefinition>> {
+        fun process(
+            annotation: TypeElement,
+            elementsAnnotatedWith: Set<Element>?,
+            filer: Filer
+        ): Map<String, List<AxiomDefinition>> {
             var result = HashMap<String, List<AxiomDefinition>>()
 
             elementsAnnotatedWith?.forEach { element: Element ->
@@ -20,7 +24,7 @@ class AlgebraicStructureProcessing {
                 var annotationExpr = classDeclaration.getAnnotationByName(annotation.simpleName.toString()).get()
                 annotationExpr = annotationExpr.asNormalAnnotationExpr()
                 var p = annotationExpr.pairs;
-                for (item : MemberValuePair in p) {
+                for (item: MemberValuePair in p) {
                     var n = item.name
                     var v = item.value as StringLiteralExpr
                     println("$n $v")

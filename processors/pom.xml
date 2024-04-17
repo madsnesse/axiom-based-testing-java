@@ -66,6 +66,9 @@
                 <targetPath>META-INF/predefined_axioms</targetPath>
             </resource>
         </resources>
+        <testOutputDirectory>
+            ${project.basedir}/target/test-classes
+        </testOutputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -78,6 +81,12 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
@@ -85,6 +94,12 @@
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/test/java</sourceDir>
+                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
@@ -141,8 +156,9 @@
                             <outputDirectory>${basedir}/src/main/resources/predefined_axioms</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.build.directory}/generated-sources/annotations/predefined_axioms</directory>
-
+                                    <directory>
+                                        ${project.build.directory}/generated-sources/annotations/predefined_axioms
+                                    </directory>
                                 </resource>
                             </resources>
                         </configuration>

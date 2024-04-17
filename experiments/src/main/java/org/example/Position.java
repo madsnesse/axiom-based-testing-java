@@ -1,11 +1,14 @@
 package org.example;
 import no.uib.ii.annotations.Axiom;
+
+import java.util.Objects;
+
 import static no.uib.ii.StaticMethods.assertEquals;
 
 public class Position {
 
-    private int x;
-    private int y;
+    int x;
+    int y;
 
     public Position(int x, int y) {
         this.x = x;
@@ -19,7 +22,7 @@ public class Position {
 
     @Axiom
     public static void addIsAssociative(Position a, Position b, Position c) {
-        Position aPlusB = a.deepCopy();
+        Position aPlusB = (Position) a.deepCopy();
         aPlusB.add(b); //a + b
         aPlusB.add(c); // (a+b) + c
 
@@ -31,5 +34,19 @@ public class Position {
     //helper method
     public Position deepCopy() {
         return new Position(x,y);
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(x, y);
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!(o instanceof Position)) return false;
+        Position p = ((Position) o);
+        return x == p.x && y == p.y;
     }
 }
