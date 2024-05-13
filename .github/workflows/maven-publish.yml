@@ -29,7 +29,7 @@ jobs:
       run: mvn -B package --file pom.xml -P releaseProfile
 
     - name: Publish to GitHub Packages Apache Maven
-      run: echo "Tag name is ${{ github.event.ref }}" |
+      run: echo "Tag name is ${GITHUB_REF#refs/*/}" |
         mvn deploy -s $GITHUB_WORKSPACE/settings.xml -P releaseProfile
       env:
         GITHUB_TOKEN: ${{ github.token }}
