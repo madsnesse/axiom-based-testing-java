@@ -1,5 +1,5 @@
 package org.example;
-
+import no.uib.ii.algebaric_structures.Group;
 import no.uib.ii.annotations.InheritAxioms;
 
 import java.util.Objects;
@@ -8,7 +8,7 @@ import static no.uib.ii.StaticMethods.assertEquals;
 import static no.uib.ii.StaticMethods.assertTrue;
 
 @InheritAxioms
-public class Pos {//implements Comparable<Pos>, Group<Pos> {
+public class Pos implements Comparable<Pos>, Group<Pos> {
 
     public int x;
     public int y;
@@ -19,25 +19,25 @@ public class Pos {//implements Comparable<Pos>, Group<Pos> {
         //dataInvariant(this);
     }
 
-//    @Override
-//    public Pos binaryOperation(Pos a) {
-//        return this;
-//    }
-//
-//    @Override
-//    public Pos inverse() {
-//        return this;
-//    }
-//
-//    @Override
-//    public Pos identity() {
-//        return this;
-//    }
-//
-//    @Override
-//    public int compareTo(@NotNull Pos o) {
-//        return 0;
-//    }
+    @Override
+    public Pos binaryOperation(Pos a) {
+        return this;
+    }
+
+    @Override
+    public Pos inverse() {
+        return this;
+    }
+
+    @Override
+    public Pos identity() {
+        return this;
+    }
+
+    @Override
+    public int compareTo(Pos o) {
+        return 0;
+    }
 
     //@Axiom //TODO kanskje datainvariant som egen annotasjon
     public static void dataInvariant(Pos p) {

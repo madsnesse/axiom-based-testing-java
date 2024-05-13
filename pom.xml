@@ -27,8 +27,14 @@
         <module>common</module>
       </modules>
     </profile>
-  </profiles>
 
+  </profiles>
+  <modules>
+    <module>generator</module>
+    <module>processors</module>
+    <module>experiments</module>
+    <module>common</module>
+  </modules>
   <distributionManagement>
     <repository>
       <id>github</id>
@@ -53,11 +59,6 @@
       <artifactId>kotlin-test</artifactId>
       <version>${kotlin.version}</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.auto.value</groupId>
-      <artifactId>auto-value</artifactId>
-      <version>1.10</version>
     </dependency>
     <dependency>
       <groupId>com.github.javaparser</groupId>

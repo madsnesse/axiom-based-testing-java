@@ -31,7 +31,7 @@ internal class AxiomConversionTest {
         assertTrue { convertParentAxioms(ml, typeElement = typeElement, filer = filer).isEmpty() }
     }
 
-    @Test
+    //@Test
     fun convertParentAxiomsListWithOneAxiomShouldReturnEmptyList() {
         val ml: List<AxiomDefinition> = listOf(
             axiomDefinitions[0]

@@ -27,7 +27,7 @@ class AxiomDefinition (private val method : MethodDeclaration,
     }
 
     fun copy(): AxiomDefinition {
-        return AxiomDefinition(method.clone(), generic, qualifiedClassName, generate)
+        return AxiomDefinition(method.clone(), generic, qualifiedClassName.copy(), generate)
     }
 
 

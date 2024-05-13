@@ -13,7 +13,7 @@ public interface Group<T> {
 
     T identity();
 
-    //@Axiom
+    @Axiom
     static <T extends Group<T>> void associativeBinaryOperation(T a, T b, T c) {
         //TODO fix with deepcopy
         T aCp = a;

@@ -32,4 +32,8 @@ class QualifiedClassName {
         return "$packageName.$className"
     }
 
+    fun copy(): QualifiedClassName {
+        return QualifiedClassName(packageName, className)
+    }
+
 }

@@ -18,7 +18,8 @@ fun convertParentAxioms(
     filer: Filer
 ): List<AxiomDefinition> {
     val result = ArrayList<AxiomDefinition>();
-    axioms.forEach { axiomDefinition ->
+    axioms.forEach { ad ->
+        val axiomDefinition = ad.copy()
         if (!axiomDefinition.isGeneric() &&
             !axiomDefinition.getQualifiedClassName().equals(typeElement.qualifiedName)
         ) {
@@ -42,7 +43,7 @@ fun convertParentAxioms(
                 if (!axiomDefinition.getQualifiedClassName().equalsString("java.lang.Object") && !containsAxiomOwner) {
                     throw UnexpectedError("Axiom owner is not a parent of the class")
                 }
-            } //TODO error handling
+            }
             val m = axiomDefinition.getMethod()
             val newType = StaticJavaParser.parseType(typeElement.qualifiedName.toString())
 
@@ -67,16 +68,18 @@ fun convertGenericAxioms(
     typeElement: TypeElement,
     typeUtils: Types?
 ): MutableList<AxiomDefinition> {
-
-    axioms.forEach { axiomDefinition ->
+    val newAxioms = ArrayList<AxiomDefinition>();
+    axioms.forEach { ad ->
+        val axiomDefinition = ad.copy()
         if (axiomDefinition.isGeneric()) {
             val m = axiomDefinition.getMethod()
             val t = StaticJavaParser.parseType(typeElement.qualifiedName.toString())
             convertTypeInMethod(m, t)
             axiomDefinition.setGeneric(false)
         }
+        newAxioms.add(axiomDefinition)
     }
-    return axioms
+    return newAxioms
 }
 
 /**

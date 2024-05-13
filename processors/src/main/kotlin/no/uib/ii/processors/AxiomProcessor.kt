@@ -1,6 +1,5 @@
 package no.uib.ii.processors
 
-import autovalue.shaded.com.google.auto.service.AutoService
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.body.MethodDeclaration
 import no.uib.ii.AxiomDefinition
@@ -10,6 +9,7 @@ import no.uib.ii.QualifiedClassName
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.FileNotFoundException
+import java.util.*
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.*
@@ -23,7 +23,6 @@ import javax.tools.Diagnostic
     "no.uib.ii.annotations.DefinedGenerator"
 )
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
-@AutoService(Processor::class)
 class AxiomProcessor : AbstractProcessor() {
 
     private val parser = JavaParser();

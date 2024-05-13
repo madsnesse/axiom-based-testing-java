@@ -1,6 +1,5 @@
 package no.uib.ii.annotation.processor;
 
-import autovalue.shaded.com.google.auto.service.AutoService;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import no.uib.ii.DataGenerator;
@@ -19,7 +18,6 @@ import static no.uib.ii.annotation.processor.AnnotationProcessor.DEFINED_GENERAT
 
 @SupportedAnnotationTypes({DEFINED_GENERATOR})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
-@AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor {
 
     public static final String DEFINED_GENERATOR = "no.uib.ii.annotations.DefinedGenerator";
