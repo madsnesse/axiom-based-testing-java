@@ -4,7 +4,6 @@ import com.github.javaparser.ast.NodeList
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.body.Parameter
 import no.uib.ii.AxiomDefinition
-import no.uib.ii.DataGenerator
 import no.uib.ii.FileUtils
 import no.uib.ii.QualifiedClassName
 import no.uib.ii.annotations.AxiomForExistingClass
@@ -54,7 +53,7 @@ class UserDefinedProcessing {
 
             //TODO check if it is a interface, if so find the classes in the classpath that implement said interface
 
-            val cu = FileUtils.getCompilationUnitForTypeElement(typeElement, filer);
+            val cu = FileUtils.getClassOrInterfaceForTypeElement(typeElement, filer);
 
             if (cu.isInterface or cu.isAbstract) {
                 //find all children in classpath
@@ -168,19 +167,7 @@ class UserDefinedProcessing {
             )
         }
 
-        fun processGenerator(
-            elementsAnnotatedWith: Set<Element>?,
-            filer: Filer?,
-            typeUtils: Types?,
-            axiomDeclarations: MutableMap<String, MutableList<AxiomDefinition>>
-        ) {
-            elementsAnnotatedWith?.forEach(
-                fun(element: Element) {
-                    element.simpleName
-                    //check that supertype is Generator<T> and set
-                }
-            )
-        }
+
     }
 
 }

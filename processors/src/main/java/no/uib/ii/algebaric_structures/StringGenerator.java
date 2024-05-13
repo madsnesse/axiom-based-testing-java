@@ -1,6 +1,7 @@
-package no.uib.ii.defaultgenerators;
+package no.uib.ii.algebaric_structures;
 
 import no.uib.ii.annotations.DefinedGenerator;
+import no.uib.ii.defaultgenerators.Generator;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Random;

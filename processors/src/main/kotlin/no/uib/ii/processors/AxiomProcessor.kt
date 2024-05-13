@@ -10,12 +10,10 @@ import no.uib.ii.QualifiedClassName
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.FileNotFoundException
-import java.lang.Class
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.*
 import javax.tools.Diagnostic
-import javax.tools.StandardLocation
 
 
 @SupportedAnnotationTypes(
@@ -32,7 +30,7 @@ class AxiomProcessor : AbstractProcessor() {
     private val dataGenerator = DataGenerator();
     private var testClassGenerator = TestClassGenerator(dataGenerator);
     private var axiomDeclarations: MutableMap<String, MutableList<AxiomDefinition>> = HashMap();
-
+    private var generatorProcessing = GeneratorProcessing(dataGenerator);
     private fun loadAxiomsFromFiles(): MutableMap<String, MutableList<AxiomDefinition>> {
         val result: MutableMap<String, MutableList<AxiomDefinition>> = axiomDeclarations;
         try {
@@ -95,6 +93,8 @@ class AxiomProcessor : AbstractProcessor() {
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
         val predefinedAxioms = loadAxiomsFromFiles()
         val fileUtils = FileUtils(processingEnv.filer)
+        val jsonGenerators = loadGeneratorMap()
+        dataGenerator.addGenerators(jsonGenerators)
         axiomDeclarations = predefinedAxioms;
         annotations?.forEach(
             fun(annotation: TypeElement) {
@@ -127,7 +127,7 @@ class AxiomProcessor : AbstractProcessor() {
                             )
 
                         "no.uib.ii.annotations.DefinedGenerator" ->
-                            UserDefinedProcessing.processGenerator(
+                            generatorProcessing.processGenerator(
                                 elementsAnnotatedWith,
                                 processingEnv.filer,
                                 processingEnv.typeUtils,
@@ -136,7 +136,7 @@ class AxiomProcessor : AbstractProcessor() {
                     }
                 }catch (e: Exception){
                     processingEnv.messager.printMessage(
-                        Diagnostic.Kind.ERROR,
+                        Diagnostic.Kind.WARNING,
                         "Error processing annotation ${annotation.simpleName}: ${e.message}")
                 }
             }
@@ -149,6 +149,7 @@ class AxiomProcessor : AbstractProcessor() {
 
         if (roundEnv?.processingOver()!!) {
             testClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer)
+            fileUtils.writeGeneratorList(dataGenerator.availableGenerators)
             fileUtils.writeAxiomsToPropertyFile(axiomDeclarations)
         }
         return false
@@ -156,6 +157,29 @@ class AxiomProcessor : AbstractProcessor() {
 
     override fun init(processingEnv: ProcessingEnvironment?) {
         super.init(processingEnv)
+    }
+
+    private fun loadGeneratorMap(): Map<String, String> {
+        val result: MutableMap<String, String> = HashMap();
+        try {
+            val index = AxiomProcessor::class.java.classLoader.getResource("META-INF/predefined_axioms/generator_index")
+                    ?.readText().orEmpty()
+            if (index.isEmpty()) {
+                return result
+            }
+            val jsonObject = JSONObject(index)
+            for (key in jsonObject.keys()) {
+                result[key] = jsonObject.getString(key)
+            }
+        } catch (e: NullPointerException) {
+            println("nothing to index")
+        } catch (e: FileNotFoundException) {
+            println("nothing to index")
+        } catch (e: NoSuchElementException) {
+            println(e)
+        }
+
+        return result
     }
 
     private fun getMethods(): List<MethodDeclaration> {

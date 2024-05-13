@@ -1,5 +1,6 @@
 package no.uib.ii
 
+import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
 import org.json.JSONArray
 import org.json.JSONObject
@@ -38,6 +39,16 @@ class FileUtils(private val filer: Filer) {
 
     }
 
+    fun writeGeneratorList(availableGenerators: Map<String, String>) {
+        val jsonObject = JSONObject(availableGenerators)
+        filer.createResource(StandardLocation.SOURCE_OUTPUT, "predefined_axioms", "generator_index")
+            .openWriter().use {  writer ->
+                writer.write(jsonObject.toString())
+                writer.close()
+            }
+
+    }
+
     companion object {
         fun getSourceFile(filer: Filer, packageName: String, fileName: String): String {
             var s = ""
@@ -65,17 +76,25 @@ class FileUtils(private val filer: Filer) {
                 outputStream.write(content.toByteArray())
             }
         }
-        fun getCompilationUnitForTypeElement(typeElement: TypeElement, filer: Filer) : ClassOrInterfaceDeclaration {
-            var sourceFile = FileUtils.getSourceFileForTypeElement(typeElement, filer)
+        fun getClassOrInterfaceForTypeElement(typeElement: TypeElement, filer: Filer) : ClassOrInterfaceDeclaration {
+            val sourceFile = FileUtils.getSourceFileForTypeElement(typeElement, filer)
 
-            var traverser = ASTTraverser();
+            val traverser = ASTTraverser();
             val cu = traverser.loadClassFromSource(sourceFile);
 
             return cu.second;
         }
+        fun getCompilationUnitForTypeElement(typeElement: TypeElement, filer: Filer) : CompilationUnit {
+            val sourceFile = FileUtils.getSourceFileForTypeElement(typeElement, filer)
+
+            val traverser = ASTTraverser();
+            val cu = traverser.loadClassFromSource(sourceFile);
+
+            return cu.first;
+        }
         fun getSourceFileForTypeElement(typeElement: TypeElement, filer: Filer): String {
 
-            var sourceFile = FileUtils.getSourceFile(
+            val sourceFile = FileUtils.getSourceFile(
                 filer,
                 packageFromQualifiedName(typeElement.qualifiedName.toString()),
                 classFromQualifiedName(typeElement.qualifiedName.toString())

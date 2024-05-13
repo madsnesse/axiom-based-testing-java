@@ -156,6 +156,7 @@
                                     </directory>
                                 </resource>
                             </resources>
+
                         </configuration>
                     </execution>
                 </executions>

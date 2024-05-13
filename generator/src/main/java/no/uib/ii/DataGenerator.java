@@ -11,6 +11,7 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
 import no.uib.ii.defaultgenerators.Generator;
+import no.uib.ii.defaultgenerators.GeneratorFinder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.processing.Filer;
@@ -23,7 +24,20 @@ public class DataGenerator {
 
     private static final String CLASS_NAME_IN_TEMPLATE = "CLASS_NAME";
     private static final Random r = new Random();
-    private Map<Class<?>, Class<? extends Generator>> availableGenerators = GeneratorFinder.defaultGenerators();
+    private Map<String, String> availableGenerators;
+
+    public DataGenerator() {
+        this.availableGenerators = new HashMap<>();
+    }
+
+
+    public void addGenerator(String className, String generator) {
+        availableGenerators.put(className, generator);
+    }
+    public Map<String, String> getAvailableGenerators() {
+        return availableGenerators;
+    }
+
     public String generateGeneratorForClass(ClassOrInterfaceDeclaration clazz, Filer filer) {
         if (clazz.getConstructors().isEmpty()) {
             return generateGeneratorEmptyConstructor(clazz, filer);
@@ -35,7 +49,7 @@ public class DataGenerator {
             while (parameters.hasNext()) {
                 var p = parameters.next();
                 var generator = getGeneratorForClass(p.getType());
-                generators.add(generator);
+                generator.ifPresent(generators::add);
             }
 
             JavaParser parser = new JavaParser();
@@ -141,33 +155,41 @@ public class DataGenerator {
 //        }
     }
 
-    public Generator<?> getGeneratorForClass(Class<?> aClass) throws ClassNotFoundException {
+    public Optional<Generator<?>> getGeneratorForClass(Class<?> aClass) throws ClassNotFoundException {
         System.out.println(aClass);
 
 
-        switch (aClass.getName()) {
-            case ("int"), ("java.lang.Integer"):
-                return instantiateGenerator(availableGenerators.get(Integer.class));
-            case ("java.lang.String"), ("java.lang.StringBuffer"):
-                return instantiateGenerator(availableGenerators.get(String.class));
+//        switch (aClass.getName()) {
+//            case ("int"), ("java.lang.Integer"):
+//                return instantiateGenerator(availableGenerators.get(Integer.class));
+//            case ("java.lang.String"), ("java.lang.StringBuffer"):
+//                return instantiateGenerator(availableGenerators.get(String.class));
+//        }
+        var generatorName = availableGenerators.get(aClass.getName());
+        if (generatorName == null) {
+            generatorName = availableGenerators.get(aClass.getSimpleName());
         }
+        var generatorClass = Class.forName(generatorName);
+        return Optional.ofNullable(instantiateGenerator((Class<? extends Generator>) generatorClass));
+    }
 
-            return instantiateGenerator(availableGenerators.get(Class.forName(aClass.toString())));
-        }
-
-    private Generator<?> getGeneratorForClass(Type aClass) {
-        System.out.println(aClass);
+    private Optional<Generator<?>> getGeneratorForClass(Type aClass) {
+        System.out.println("HEI" + aClass);
+        String className = aClass.asString();
         switch (aClass.asString()) {
             case ("int"):
-                return instantiateGenerator(availableGenerators.get(Integer.class));
-            //TODO fill in
+                className = "java.lang.Integer";
+                break;
             case ("String"):
-                return instantiateGenerator(availableGenerators.get(String.class));
+                className = "java.lang.String";
+                break;
+            default:
+                break;
         }
         try {
-            return instantiateGenerator(availableGenerators.get(Class.forName(aClass.asString())));
+            return getGeneratorForClass(Class.forName(className));
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            return Optional.empty();
         }
     }
 
@@ -192,5 +214,9 @@ public class DataGenerator {
 
     public boolean hasGeneratorForClass(@NotNull Class<?> get) {
         return availableGenerators.containsKey(get);
+    }
+
+    public void addGenerators(@NotNull Map<String, String> jsonGenerators) {
+        jsonGenerators.forEach(this::addGenerator);
     }
 }

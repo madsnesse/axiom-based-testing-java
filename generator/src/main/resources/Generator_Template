@@ -1,6 +1,6 @@
 package no.uib.ii.generators;
 import no.uib.ii.defaultgenerators.Generator;
-import no.uib.ii.defaultgenerators.IntegerGenerator;
+import no.uib.ii.algebaric_structures.IntegerGenerator;
 import no.uib.ii.annotations.DefinedGenerator;
 
 import java.util.Random;

@@ -3,13 +3,7 @@ package no.uib.ii;
 
 import no.uib.ii.defaultgenerators.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GeneratorFinder {
 
@@ -55,8 +49,8 @@ public class GeneratorFinder {
 
     }
 
-    public static Map<Class<?>, Class<? extends Generator>> defaultGenerators() {
-        Map<Class<?>, Class<? extends Generator>> result = new HashMap<>();
+    public static Map<String, String> defaultGenerators() {
+        Map<String, String> result = new HashMap<>();
         //TODO do this differently
         var generators = new no.uib.ii.defaultgenerators.GeneratorFinder().getAllGeneratorsInPackage();
 
@@ -77,8 +71,8 @@ public class GeneratorFinder {
 //            int length = f.length;
 //        });
         //var lines = br.lines().collect(Collectors.toList());
-        result.put(String.class, StringGenerator.class);
-        result.put(Integer.class, IntegerGenerator.class);
+        //result.put(String.class, StringGenerator.class);
+        //result.put(Integer.class, IntegerGenerator.class);
         return result;
     }
 }

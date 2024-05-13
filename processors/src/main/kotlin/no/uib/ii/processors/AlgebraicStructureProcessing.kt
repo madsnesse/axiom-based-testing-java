@@ -19,7 +19,7 @@ class AlgebraicStructureProcessing {
 
             elementsAnnotatedWith?.forEach { element: Element ->
                 println(element)
-                var classDeclaration = FileUtils.getCompilationUnitForTypeElement(element as TypeElement, filer)
+                var classDeclaration = FileUtils.getClassOrInterfaceForTypeElement(element as TypeElement, filer)
 
                 var annotationExpr = classDeclaration.getAnnotationByName(annotation.simpleName.toString()).get()
                 annotationExpr = annotationExpr.asNormalAnnotationExpr()

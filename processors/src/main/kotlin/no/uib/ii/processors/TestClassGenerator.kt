@@ -2,6 +2,7 @@ package no.uib.ii.processors
 
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ParseException
+import com.github.javaparser.StaticJavaParser
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.ImportDeclaration
 import com.github.javaparser.ast.body.*
@@ -23,15 +24,20 @@ class TestClassGenerator (private val dataGenerator: DataGenerator) {
         private val parser = JavaParser();
         fun generateTestClassesForAxioms(axiomDeclarations: Map<String, List<AxiomDefinition>>, filer: Filer?) {
 
-            var generators: Map<String, List<String>> = getGeneratorsForAxioms(filer!!, axiomDeclarations);
+            val generators: Map<String, List<String>> = getGeneratorsForAxioms(filer!!, axiomDeclarations);
 
             for (axiomDeclaration in axiomDeclarations) {
-                if (generators.containsKey(axiomDeclaration.key)) {
+                val imports = resolveImports(axiomDeclaration.key, axiomDeclaration.value, generators[axiomDeclaration.key].orEmpty()).toMutableList()
+                if (dataGenerator.availableGenerators.containsKey(axiomDeclaration.key.substringAfterLast("."))) {
+                    val generatorName = dataGenerator.availableGenerators[axiomDeclaration.key.substringAfterLast(".")]!!
+                    imports += StaticJavaParser.parseImport("import $generatorName ;");
+                }
+                if (generators.containsKey(axiomDeclaration.key) || dataGenerator.availableGenerators.containsKey(axiomDeclaration.key.substringAfterLast("."))) {
                     generateTestClass(
                         filer,
                         axiomDeclaration.key,
                         axiomDeclaration.value,
-                        generators[axiomDeclaration.key]!!
+                        imports
                     )
                 }
             }
@@ -59,7 +65,10 @@ class TestClassGenerator (private val dataGenerator: DataGenerator) {
                                 generators.add(generator.name)
                             }
                             //generators.add(DataGenerator.generateGeneratorForClass(clazz.get()))
-                        } else { //Check if it is a type
+                        } else if (dataGenerator.availableGenerators.containsKey(requiredClass.substringAfterLast("."))) {
+                            //no need to generate
+                        }
+                        else { //Check if it is a type
                             val fileName = requiredClass.split(".").last() + ".java"
                             val packageName = requiredClass.split(".").dropLast(1).joinToString(".")
                             val c = FileUtils.getSourceFile(filer, packageName, fileName)
@@ -183,12 +192,11 @@ class TestClassGenerator (private val dataGenerator: DataGenerator) {
             filer: Filer,
             className: String,
             axiomDeclarations: List<AxiomDefinition>,
-            generators: List<String>
+            imports: List<ImportDeclaration>
         ) {
 
             var cu: CompilationUnit = CompilationUnit("annotations.no.uib.ii.jaxioms");
 
-            val imports = resolveImports(className, axiomDeclarations, generators)
             val methods: List<MethodDeclaration> =
                 axiomDeclarations.map { axiomDeclaration -> axiomDeclaration.getMethod() }
 

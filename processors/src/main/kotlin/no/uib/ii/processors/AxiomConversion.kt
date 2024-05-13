@@ -22,7 +22,7 @@ fun convertParentAxioms(
         if (!axiomDefinition.isGeneric() &&
             !axiomDefinition.getQualifiedClassName().equals(typeElement.qualifiedName)
         ) {
-            val cd = FileUtils.getCompilationUnitForTypeElement(typeElement, filer)
+            val cd = FileUtils.getClassOrInterfaceForTypeElement(typeElement, filer)
             var containsAxiomOwner = false;
             cd.extendedTypes.forEach { classOrInterfaceType ->
                 val qualifiedTypeName = StaticJavaParser.parseType(classOrInterfaceType.toString())

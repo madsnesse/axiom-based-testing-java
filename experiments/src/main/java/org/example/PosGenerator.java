@@ -7,6 +7,6 @@ import no.uib.ii.defaultgenerators.Generator;
 public class PosGenerator extends Generator<Pos> {
     @Override
     public Pos generate() {
-        return new Pos(this.random.nextInt(0), this.random.nextInt(0));
+        return new Pos(this.random.nextInt(8), this.random.nextInt(8));
     }
 }
