@@ -20,6 +20,7 @@
     </profile>
     <profile>
       <id>testProfile</id>
+      <activation><activeByDefault>true</activeByDefault></activation>
       <modules>
         <module>generator</module>
         <module>processors</module>
@@ -27,14 +28,7 @@
         <module>common</module>
       </modules>
     </profile>
-
   </profiles>
-  <modules>
-    <module>generator</module>
-    <module>processors</module>
-    <module>experiments</module>
-    <module>common</module>
-  </modules>
   <distributionManagement>
     <repository>
       <id>github</id>
