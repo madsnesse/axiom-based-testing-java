@@ -9,12 +9,26 @@
 
   <name>jaxioms</name>
   <url>http://maven.apache.org</url>
-  <modules>
-    <module>generator</module>
-    <module>processors</module>
-    <module>experiments</module>
-      <module>common</module>
-  </modules>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <modules>
+        <module>generator</module>
+        <module>processors</module>
+        <module>common</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>test</id>
+      <modules>
+        <module>generator</module>
+        <module>processors</module>
+        <module>experiments</module>
+        <module>common</module>
+      </modules>
+    </profile>
+  </profiles>
+
   <distributionManagement>
     <repository>
       <id>github</id>
@@ -110,7 +124,4 @@
       </plugin>
     </plugins>
   </build>
-
-
-
 </project>
