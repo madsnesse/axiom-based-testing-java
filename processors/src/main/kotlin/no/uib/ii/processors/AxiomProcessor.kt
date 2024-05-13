@@ -4,20 +4,24 @@ import autovalue.shaded.com.google.auto.service.AutoService
 import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.body.MethodDeclaration
 import no.uib.ii.AxiomDefinition
+import no.uib.ii.DataGenerator
 import no.uib.ii.FileUtils
 import no.uib.ii.QualifiedClassName
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.FileNotFoundException
+import java.lang.Class
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.*
+import javax.tools.StandardLocation
 
 
 @SupportedAnnotationTypes(
     "no.uib.ii.annotations.Axiom",
     "no.uib.ii.annotations.InheritAxioms",
-    "no.uib.ii.annotations.AxiomForExistingClass"
+    "no.uib.ii.annotations.AxiomForExistingClass",
+    "no.uib.ii.annotations.DefinedGenerator"
 )
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @AutoService(Processor::class)
@@ -30,13 +34,13 @@ class AxiomProcessor : AbstractProcessor() {
     private fun loadAxiomsFromFiles(): MutableMap<String, MutableList<AxiomDefinition>> {
         val result: MutableMap<String, MutableList<AxiomDefinition>> = axiomDeclarations;
         try {
-            var index =
+            val index =
                 AxiomProcessor::class.java.classLoader.getResource("META-INF/predefined_axioms/predefined_index")
                     ?.readText().orEmpty()
             println("index: $index")
             for (line: String in index.split("\n")) {
                 if (line.isBlank()) continue
-                var file = AxiomProcessor::class.java.classLoader.getResource(
+                val file = AxiomProcessor::class.java.classLoader.getResource(
                     "META-INF/predefined_axioms/${
                         line.replace(
                             " ",
@@ -46,8 +50,8 @@ class AxiomProcessor : AbstractProcessor() {
                 )
                     ?.readText().orEmpty()
                 if (file.isNotEmpty()) {
-                    var jsonArray = JSONArray(file)
-                    var existing = axiomDeclarations.getOrDefault(line, ArrayList())
+                    val jsonArray = JSONArray(file)
+                    val existing = axiomDeclarations.getOrDefault(line, ArrayList())
                     for (axiomdecl in jsonArray) {
                         val decl: JSONObject = axiomdecl as JSONObject
                         parser.parseMethodDeclaration(decl["method"].toString()).result.ifPresent { md ->
@@ -59,7 +63,6 @@ class AxiomProcessor : AbstractProcessor() {
                                 )
                             )
                         }
-
                     }
                     result[line.substringBefore(".json")] = existing
                 }
@@ -101,33 +104,45 @@ class AxiomProcessor : AbstractProcessor() {
         annotations?.forEach(
             fun(annotation: TypeElement) {
                 val elementsAnnotatedWith = roundEnv?.getElementsAnnotatedWith(annotation)
-                when (annotation.toString()) {
-                    "no.uib.ii.annotations.AxiomForExistingClass" ->
-                        UserDefinedProcessing.processAxiomForExistingClass(
-                            elementsAnnotatedWith,
-                            processingEnv.filer,
-                            processingEnv.typeUtils,
-                            axiomDeclarations
-                        )
+                try{
+                    when (annotation.toString()) {
+                        "no.uib.ii.annotations.AxiomForExistingClass" ->
+                            UserDefinedProcessing.processAxiomForExistingClass(
+                                elementsAnnotatedWith,
+                                processingEnv.filer,
+                                processingEnv.typeUtils,
+                                axiomDeclarations
+                            )
 
-                    "no.uib.ii.annotations.Axiom" ->
-                        UserDefinedProcessing.processAxiom(
-                            elementsAnnotatedWith,
-                            processingEnv.filer,
-                            processingEnv.typeUtils,
-                            axiomDeclarations
-                        )
+                        "no.uib.ii.annotations.Axiom" ->
+                            UserDefinedProcessing.processAxiom(
+                                elementsAnnotatedWith,
+                                processingEnv.filer,
+                                processingEnv.typeUtils,
+                                axiomDeclarations
+                            )
 
-                    "no.uib.ii.annotations.InheritAxioms" ->
-                        //TODO if this annotation present, apply axioms from parent(s)
-                        UserDefinedProcessing.applyAxiomsFromParent(
-                            elementsAnnotatedWith,
-                            processingEnv.filer,
-                            processingEnv.typeUtils,
-                            axiomDeclarations
-                        )
+
+                        "no.uib.ii.annotations.InheritAxioms" ->
+                            UserDefinedProcessing.applyAxiomsFromParent(
+                                elementsAnnotatedWith,
+                                processingEnv.filer,
+                                processingEnv.typeUtils,
+                                axiomDeclarations
+                            )
+
+                        "no.uib.ii.annotations.DefinedGenerator" ->
+                            UserDefinedProcessing.processGenerator(
+                                elementsAnnotatedWith,
+                                processingEnv.filer,
+                                processingEnv.typeUtils,
+                                axiomDeclarations
+                            )
 //            Group::class.qualifiedName ->
 //                axiomDeclarations = AlgebraicStructureProcessing.process(annotation, elementsAnnotatedWith, processingEnv.filer)
+                    }
+                }catch (e: Exception){
+                    println(e)
                 }
             }
         )
@@ -141,16 +156,14 @@ class AxiomProcessor : AbstractProcessor() {
             TestClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer)
             fileUtils.writeAxiomsToPropertyFile(axiomDeclarations)
         }
-        return true
+        return false
     }
 
+    override fun init(processingEnv: ProcessingEnvironment?) {
+        super.init(processingEnv)
 
-    private fun processExistingAxiom(elementsAnnotatedWith: Set<Element>?): Map<String, List<AxiomDefinition>> {
-        println(elementsAnnotatedWith)
-        //TODO
-        return HashMap()
+
     }
-
 
     private fun getMethods(): List<MethodDeclaration> {
         val result = mutableListOf<MethodDeclaration>();

@@ -30,9 +30,15 @@ fun convertParentAxioms(
                 )
                     containsAxiomOwner = true
             }
+            cd.implementedTypes.forEach { classOrInterfaceType ->
+                val qualifiedTypeName = StaticJavaParser.parseType(classOrInterfaceType.toString())
+                if (qualifiedTypeName.asClassOrInterfaceType().nameWithScope ==
+                    (axiomDefinition.getQualifiedClassName().getClassName())
+                )
+                    containsAxiomOwner = true
+            }
             if (!(axiomDefinition.getQualifiedClassName().equalsString(typeElement.qualifiedName.toString()))) {
                 if (!axiomDefinition.getQualifiedClassName().equalsString("java.lang.Object") && !containsAxiomOwner) {
-
                     throw Exception()
                 }
             } //TODO error handling

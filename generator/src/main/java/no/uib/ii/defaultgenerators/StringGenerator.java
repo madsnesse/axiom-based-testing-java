@@ -1,6 +1,6 @@
 package no.uib.ii.defaultgenerators;
 
-import no.uib.ii.annotation.DefinedGenerator;
+import no.uib.ii.annotations.DefinedGenerator;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Random;

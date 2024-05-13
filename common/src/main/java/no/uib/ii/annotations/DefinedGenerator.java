@@ -1,4 +1,4 @@
-package no.uib.ii.annotation;
+package no.uib.ii.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

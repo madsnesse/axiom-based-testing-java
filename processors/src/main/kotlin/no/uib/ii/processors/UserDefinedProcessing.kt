@@ -4,6 +4,7 @@ import com.github.javaparser.ast.NodeList
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.body.Parameter
 import no.uib.ii.AxiomDefinition
+import no.uib.ii.DataGenerator
 import no.uib.ii.FileUtils
 import no.uib.ii.QualifiedClassName
 import no.uib.ii.annotations.AxiomForExistingClass
@@ -25,17 +26,19 @@ class UserDefinedProcessing {
             axiomDeclarations: MutableMap<String, MutableList<AxiomDefinition>>
         ): MutableMap<String, MutableList<AxiomDefinition>> {
 
-            elementsAnnotatedWith?.forEach {
-                var typeElement = it.enclosingElement as TypeElement
-                val axiomMethod = processAxiomMethod(it, typeElement, filer, typeUtils)
+            elementsAnnotatedWith?.forEach (
+                fun (element: Element) {
+                    var typeElement = element.enclosingElement as TypeElement
+                    val axiomMethod = processAxiomMethod(element, typeElement, filer, typeUtils)
 
-                val existingAxiomsForClass = axiomDeclarations.getOrDefault(
-                    typeElement.qualifiedName.toString(),
-                    ArrayList()
-                );
-                existingAxiomsForClass.add(axiomMethod)
-                axiomDeclarations[typeElement.qualifiedName.toString()] = existingAxiomsForClass
-            }
+                    val existingAxiomsForClass = axiomDeclarations.getOrDefault(
+                        typeElement.qualifiedName.toString(),
+                        ArrayList()
+                    );
+                    existingAxiomsForClass.add(axiomMethod)
+                    axiomDeclarations[typeElement.qualifiedName.toString()] = existingAxiomsForClass
+                }
+            )
             return axiomDeclarations;
         }
 
@@ -61,7 +64,7 @@ class UserDefinedProcessing {
             var methodDeclaration: MethodDeclaration? =
                 getMethodDeclarationForAxiom(cu.methods, methodName, parameters);
 
-            return AxiomDefinition(methodDeclaration!!, qualifiedClassName = QualifiedClassName(cu.fullyQualifiedName.orElseThrow()))
+            return AxiomDefinition(methodDeclaration!!, qualifiedClassName = QualifiedClassName(cu.fullyQualifiedName.orElseThrow()), generic = methodDeclaration.isGeneric)
         }
 
         private fun getMethodDeclarationForAxiom(
@@ -148,19 +151,35 @@ class UserDefinedProcessing {
             typeUtils: Types,
             axiomDeclarations: MutableMap<String, MutableList<AxiomDefinition>>
         ) {
-            elementsAnnotatedWith?.forEach {
-                val annotation = it.getAnnotation(AxiomForExistingClass::class.java)
-                var typeElement = it.enclosingElement as TypeElement
-                val axiomMethod = processAxiomMethod(it, typeElement, filer, typeUtils)
-                axiomMethod.setGeneric(true)
-                axiomMethod.setQualifiedClassName(QualifiedClassName(annotation.className))
-                val existingAxiomsForClass = axiomDeclarations.getOrDefault(
-                    annotation.className,
-                    ArrayList()
-                );
-                existingAxiomsForClass.add(axiomMethod)
-                axiomDeclarations[annotation.className] = existingAxiomsForClass
-            }
+            elementsAnnotatedWith?.forEach (
+                fun(element: Element) {
+                    var typeElement = element.enclosingElement as TypeElement
+                    val annotation = element.getAnnotation(AxiomForExistingClass::class.java)
+                    val axiomMethod = processAxiomMethod(element, typeElement, filer, typeUtils)
+                    axiomMethod.setGeneric(true)
+                    axiomMethod.setQualifiedClassName(QualifiedClassName(annotation.className))
+                    val existingAxiomsForClass = axiomDeclarations.getOrDefault(
+                        annotation.className,
+                        ArrayList()
+                    );
+                    existingAxiomsForClass.add(axiomMethod)
+                    axiomDeclarations[annotation.className] = existingAxiomsForClass
+                }
+            )
+        }
+
+        fun processGenerator(
+            elementsAnnotatedWith: Set<Element>?,
+            filer: Filer?,
+            typeUtils: Types?,
+            axiomDeclarations: MutableMap<String, MutableList<AxiomDefinition>>
+        ) {
+            elementsAnnotatedWith?.forEach(
+                fun(element: Element) {
+                    element.simpleName
+                    //check that supertype is Generator<T> and set
+                }
+            )
         }
     }
 

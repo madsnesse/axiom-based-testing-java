@@ -4,10 +4,9 @@ import com.github.javaparser.JavaParser
 import com.github.javaparser.ParseException
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.ImportDeclaration
-import com.github.javaparser.ast.body.BodyDeclaration
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
-import com.github.javaparser.ast.body.MethodDeclaration
-import com.github.javaparser.ast.body.Parameter
+import com.github.javaparser.ast.body.*
+import com.github.javaparser.ast.expr.Expression
+import com.github.javaparser.ast.expr.VariableDeclarationExpr
 import com.github.javaparser.ast.type.ClassOrInterfaceType
 import no.uib.ii.ASTTraverser
 import no.uib.ii.AxiomDefinition
@@ -19,9 +18,10 @@ import java.util.*
 import javax.annotation.processing.Filer
 import javax.annotation.processing.FilerException
 
-class TestClassGenerator {
+class TestClassGenerator (private val dataGenerator: DataGenerator) {
     companion object {
-        private val dataGenerator = DataGenerator()
+
+        private val dataGenerator: DataGenerator = DataGenerator();
         private val parser = JavaParser();
         fun generateTestClassesForAxioms(axiomDeclarations: Map<String, List<AxiomDefinition>>, filer: Filer?) {
 
@@ -30,7 +30,7 @@ class TestClassGenerator {
             for (axiomDeclaration in axiomDeclarations) {
                 if (generators.containsKey(axiomDeclaration.key)) {
                     generateTestClass(
-                        filer!!,
+                        filer,
                         axiomDeclaration.key,
                         axiomDeclaration.value,
                         generators[axiomDeclaration.key]!!
@@ -55,9 +55,9 @@ class TestClassGenerator {
                     requiredClasses.forEach { requiredClass ->
                         val clazz = getClassFromClassName(requiredClass);
                         if (clazz.isPresent) {
-                            if (DataGenerator.hasGeneratorForClass(clazz.get())) {
+                            if (dataGenerator.hasGeneratorForClass(clazz.get())) {
 //                                predefinedGenerators.add(DataGenerator.getGeneratorForClass(clazz.get()));
-                                val generator = DataGenerator.getGeneratorForClass(clazz.get()).javaClass
+                                val generator = dataGenerator.getGeneratorForClass(clazz.get()).javaClass
                                 generators.add(generator.name)
                             }
                             //generators.add(DataGenerator.generateGeneratorForClass(clazz.get()))
@@ -165,21 +165,20 @@ class TestClassGenerator {
             return CommonParserMethods.parseOrException(parser.parseMethodDeclaration(d), "error")
         }
 
-        private fun getStreamMethod(className: String): BodyDeclaration<*>? {
-
-            var s = "public static Stream<Arguments> method(){\n" +
+        private fun getStreamMethod(className: String, numberOfArguments: Int = 1, name: String): BodyDeclaration<*>? {
+            var generateStatement = (1..numberOfArguments).joinToString(",") { "Named.of(\"Argument $it:\",clazzGenerator.generate())" }
+            var s = "public static Stream<Arguments> $name(){\n" +
                     "        Generator<Clazz> clazzGenerator = new ClazzGenerator();\n" +
                     "        List<Arguments> clazzStream = new ArrayList(); \n" +
                     "        for (int i = 0; i < NUMBER_OF_CASES; i++) {\n" +
-                    "            clazzStream.add(Arguments.of(clazzGenerator.generate(), clazzGenerator.generate(), clazzGenerator.generate()));\n" + //TODO dont have fixed number
+                    "            clazzStream.add(Arguments.of($generateStatement));\n" + //TODO dont have fixed number
                     "        }\n" +
                     "        System.out.println(clazzStream); \n" +
                     "        return clazzStream.stream();\n" +
                     "    }"
             s = s.replace("Clazz", className)
             s = s.replace("NUMBER_OF_CASES", "100"); //TODO replace with value for 100
-            var body = CommonParserMethods.parseOrException(parser.parseMethodDeclaration(s), "could not parse")
-            return body
+            return CommonParserMethods.parseOrException(parser.parseMethodDeclaration(s), "could not parse")
         }
 
         private fun generateTestClass(
@@ -202,6 +201,7 @@ class TestClassGenerator {
 
             var classDeclaration = cu.addClass("${className}GeneratedTest");
             methods.forEach(fun(method: MethodDeclaration) {
+                val args = (1..method.parameters.size).joinToString(",") { "{${(it - 1)}}" }
                 classDeclaration.addMember(
                     MethodDeclaration().setBody(method.body.orElseThrow())
                         .setType(method.type)
@@ -211,12 +211,14 @@ class TestClassGenerator {
                         .setStatic(false) //TODO skriv om hvorfor static ikke fungerte, tester ble ikke oppdaget
                         .setThrownExceptions(method.thrownExceptions)
                         .addAnnotation("ParameterizedTest")
-                        .addSingleMemberAnnotation("MethodSource", "\"method\"")
+                        .addSingleMemberAnnotation("DisplayName", parser.parseExpression<VariableDeclarationExpr>("value=\"${method.name} < $args >\"").result.get())
+                        .addSingleMemberAnnotation("MethodSource", "\"factory${method.name}\"")
+                )
+                classDeclaration.addMember(
+                    getStreamMethod(className, method.parameters.size, "factory${method.name}")
                 )
             })
-            classDeclaration.addMember(
-                getStreamMethod(className)
-            )
+
             //classDeclaration.addMember(getDebugMethod())
 
 //                var b = MethodDeclaration().setBody(StaticJavaParser.parseBlock("""
@@ -258,7 +260,9 @@ class TestClassGenerator {
             list += (ImportDeclaration("org.junit.jupiter.params.ParameterizedTest", false, false));
             list += (ImportDeclaration("org.junit.jupiter.api.BeforeAll", false, false));
             list += (ImportDeclaration("org.junit.jupiter.params.provider.Arguments", false, false));
+            list += (ImportDeclaration("org.junit.jupiter.api.Named", false, false));
             list += (ImportDeclaration("org.junit.jupiter.params.provider.MethodSource", false, false));
+            list += (ImportDeclaration("org.junit.jupiter.api.DisplayName", false, false));
             list += (ImportDeclaration("java.util.ArrayList", false, false));
             list += (ImportDeclaration("java.util.List", false, false));
             list += (ImportDeclaration("java.util.stream.Stream", false, false));

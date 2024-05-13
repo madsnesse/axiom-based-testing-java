@@ -70,6 +70,7 @@
             ${project.basedir}/target/test-classes
         </testOutputDirectory>
         <plugins>
+
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>

@@ -3,8 +3,13 @@ package no.uib.ii;
 
 import no.uib.ii.defaultgenerators.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GeneratorFinder {
 
@@ -53,7 +58,25 @@ public class GeneratorFinder {
     public static Map<Class<?>, Class<? extends Generator>> defaultGenerators() {
         Map<Class<?>, Class<? extends Generator>> result = new HashMap<>();
         //TODO do this differently
+        var generators = new no.uib.ii.defaultgenerators.GeneratorFinder().getAllGeneratorsInPackage();
 
+//        var gf = new no.uib.ii.defaultgenerators.GeneratorFinder();
+//        var g = GeneratorFinder.class.getClassLoader().getDefinedPackage(gf.getClass().getPackageName());
+//        Enumeration<URL> is = null;
+//        try {
+//            is = GeneratorFinder.class.getClassLoader().getResources(g.getName().replace(".", "/"));
+//
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        List<URL> urls = new ArrayList<>();
+//        is.asIterator().forEachRemaining(urls::add);
+//        urls.forEach(url -> {
+//            var file = new File(url.getFile());
+//            var f = file.listFiles();
+//            int length = f.length;
+//        });
+        //var lines = br.lines().collect(Collectors.toList());
         result.put(String.class, StringGenerator.class);
         result.put(Integer.class, IntegerGenerator.class);
         return result;

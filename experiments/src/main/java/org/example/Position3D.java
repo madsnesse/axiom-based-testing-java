@@ -1,8 +1,6 @@
 package org.example;
 
-import no.uib.ii.annotations.InheritAxioms;
-
-@InheritAxioms
+//@InheritAxioms
 public class Position3D extends Position {
 
     private int z;

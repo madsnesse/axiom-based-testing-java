@@ -1,17 +1,14 @@
-package org.example;
+package no.uib.ii.algebaric_structures;
 
 
 import no.uib.ii.annotations.AxiomForExistingClass;
-import no.uib.ii.annotations.InheritAxioms;
-
-import java.util.Comparator;
 
 import static no.uib.ii.StaticMethods.assertEquals;
 
 public class ObjectAxioms {
 
-    @InheritAxioms(forClass = "org.example.Position")
-    class PositionInherits{} //this class will inherit all axioms from its parent(s)
+    //@InheritAxioms(forClass = "org.example.Position")
+    //class PositionInherits{} //this class will inherit all axioms from its parent(s)
 
     @AxiomForExistingClass(className = "java.lang.Object")
     public static void equalsIsReflexive(Object o) {
@@ -24,8 +21,9 @@ public class ObjectAxioms {
 
     @AxiomForExistingClass(className = "java.lang.Object")
     public static void equalsIsTransitive(Object x, Object y, Object z) {
-        System.out.println(x + ", " + y + ", " + z);
-        assertEquals(x.equals(y) == y.equals(z), x.equals(z));
+        if (x.equals(y) && y.equals(z)) {
+            assertEquals(x, z);
+        }
     }
 
     @AxiomForExistingClass(className = "java.lang.Object")

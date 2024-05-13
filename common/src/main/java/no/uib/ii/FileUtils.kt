@@ -54,7 +54,7 @@ class FileUtils(private val filer: Filer) {
                     }
                 }
             } catch (e: Exception) {
-                println(packageName + fileName) //TODO handle exception
+                println("Could not find file: $packageName$fileName") //TODO handle exception
             }
             return s
         }

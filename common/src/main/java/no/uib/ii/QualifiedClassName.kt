@@ -28,4 +28,8 @@ class QualifiedClassName {
         return this.packageName == qualifiedClassName.substringBeforeLast(".") && this.className == qualifiedClassName.substringAfterLast(".")
     }
 
+    override fun toString(): String {
+        return "$packageName.$className"
+    }
+
 }

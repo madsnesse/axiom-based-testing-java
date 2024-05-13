@@ -23,7 +23,7 @@ public class DataGenerator {
 
     private static final String CLASS_NAME_IN_TEMPLATE = "CLASS_NAME";
     private static final Random r = new Random();
-        private static Map<Class<?>, Class<? extends Generator>> availableGenerators = GeneratorFinder.defaultGenerators();
+    private Map<Class<?>, Class<? extends Generator>> availableGenerators = GeneratorFinder.defaultGenerators();
     public String generateGeneratorForClass(ClassOrInterfaceDeclaration clazz, Filer filer) {
         if (clazz.getConstructors().isEmpty()) {
             return generateGeneratorEmptyConstructor(clazz, filer);
@@ -141,7 +141,7 @@ public class DataGenerator {
 //        }
     }
 
-    public static Generator<?> getGeneratorForClass(Class<?> aClass) throws ClassNotFoundException {
+    public Generator<?> getGeneratorForClass(Class<?> aClass) throws ClassNotFoundException {
         System.out.println(aClass);
 
 
@@ -155,7 +155,7 @@ public class DataGenerator {
             return instantiateGenerator(availableGenerators.get(Class.forName(aClass.toString())));
         }
 
-    private static Generator<?> getGeneratorForClass(Type aClass) {
+    private Generator<?> getGeneratorForClass(Type aClass) {
         System.out.println(aClass);
         switch (aClass.asString()) {
             case ("int"):
@@ -190,7 +190,7 @@ public class DataGenerator {
 //        System.out.println(generatorFile);
     }
 
-    public static boolean hasGeneratorForClass(@NotNull Class<?> get) {
+    public boolean hasGeneratorForClass(@NotNull Class<?> get) {
         return availableGenerators.containsKey(get);
     }
 }

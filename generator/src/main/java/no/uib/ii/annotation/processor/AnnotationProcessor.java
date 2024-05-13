@@ -22,7 +22,7 @@ import static no.uib.ii.annotation.processor.AnnotationProcessor.DEFINED_GENERAT
 @AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor {
 
-    public static final String DEFINED_GENERATOR = "no.uib.ii.annotation.DefinedGenerator";
+    public static final String DEFINED_GENERATOR = "no.uib.ii.annotations.DefinedGenerator";
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         JavaParser parser = new JavaParser();
