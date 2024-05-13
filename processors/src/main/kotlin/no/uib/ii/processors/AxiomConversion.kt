@@ -7,6 +7,7 @@ import com.github.javaparser.ast.type.Type
 import no.uib.ii.AxiomDefinition
 import no.uib.ii.FileUtils
 import no.uib.ii.QualifiedClassName
+import no.uib.ii.exceptions.UnexpectedError
 import javax.annotation.processing.Filer
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
@@ -39,7 +40,7 @@ fun convertParentAxioms(
             }
             if (!(axiomDefinition.getQualifiedClassName().equalsString(typeElement.qualifiedName.toString()))) {
                 if (!axiomDefinition.getQualifiedClassName().equalsString("java.lang.Object") && !containsAxiomOwner) {
-                    throw Exception()
+                    throw UnexpectedError("Axiom owner is not a parent of the class")
                 }
             } //TODO error handling
             val m = axiomDefinition.getMethod()

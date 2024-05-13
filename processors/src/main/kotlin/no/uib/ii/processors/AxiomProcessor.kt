@@ -14,6 +14,7 @@ import java.lang.Class
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.*
+import javax.tools.Diagnostic
 import javax.tools.StandardLocation
 
 
@@ -28,7 +29,8 @@ import javax.tools.StandardLocation
 class AxiomProcessor : AbstractProcessor() {
 
     private val parser = JavaParser();
-
+    private val dataGenerator = DataGenerator();
+    private var testClassGenerator = TestClassGenerator(dataGenerator);
     private var axiomDeclarations: MutableMap<String, MutableList<AxiomDefinition>> = HashMap();
 
     private fun loadAxiomsFromFiles(): MutableMap<String, MutableList<AxiomDefinition>> {
@@ -90,13 +92,6 @@ class AxiomProcessor : AbstractProcessor() {
 
     // mapping classnames to a list of all axioms to be applied to a class
 
-//    private fun getImports(): List<ImportDeclaration> {
-//        val result = mutableListOf<ImportDeclaration>();
-//        result.add(parseOrException(parser.parseImport("import org.junit.jupiter.api.Test;"), "error parsing import, contact maintainer"));
-//        result.add(parseOrException(parser.parseImport("import static org.junit.jupiter.api.Assertions.assertEquals;"),"error parsing import, contact maintainer"));
-//        return result;
-//    }
-
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
         val predefinedAxioms = loadAxiomsFromFiles()
         val fileUtils = FileUtils(processingEnv.filer)
@@ -138,11 +133,11 @@ class AxiomProcessor : AbstractProcessor() {
                                 processingEnv.typeUtils,
                                 axiomDeclarations
                             )
-//            Group::class.qualifiedName ->
-//                axiomDeclarations = AlgebraicStructureProcessing.process(annotation, elementsAnnotatedWith, processingEnv.filer)
                     }
                 }catch (e: Exception){
-                    println(e)
+                    processingEnv.messager.printMessage(
+                        Diagnostic.Kind.ERROR,
+                        "Error processing annotation ${annotation.simpleName}: ${e.message}")
                 }
             }
         )
@@ -153,7 +148,7 @@ class AxiomProcessor : AbstractProcessor() {
 
 
         if (roundEnv?.processingOver()!!) {
-            TestClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer)
+            testClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer)
             fileUtils.writeAxiomsToPropertyFile(axiomDeclarations)
         }
         return false
@@ -161,8 +156,6 @@ class AxiomProcessor : AbstractProcessor() {
 
     override fun init(processingEnv: ProcessingEnvironment?) {
         super.init(processingEnv)
-
-
     }
 
     private fun getMethods(): List<MethodDeclaration> {

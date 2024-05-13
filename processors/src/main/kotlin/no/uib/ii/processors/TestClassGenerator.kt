@@ -19,9 +19,7 @@ import javax.annotation.processing.Filer
 import javax.annotation.processing.FilerException
 
 class TestClassGenerator (private val dataGenerator: DataGenerator) {
-    companion object {
 
-        private val dataGenerator: DataGenerator = DataGenerator();
         private val parser = JavaParser();
         fun generateTestClassesForAxioms(axiomDeclarations: Map<String, List<AxiomDefinition>>, filer: Filer?) {
 
@@ -296,5 +294,4 @@ class TestClassGenerator (private val dataGenerator: DataGenerator) {
 
             return parseResult.result;
         }
-    }
 }

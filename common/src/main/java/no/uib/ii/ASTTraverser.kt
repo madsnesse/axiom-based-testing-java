@@ -22,7 +22,7 @@ class ASTTraverser {
 
         if (result == null || cu == null) {
             parseResult.problems.forEach { problem ->
-                println(problem)
+                throw UnexpectedParseException(problem.message)
             } //TODO fiks denne
             //throw Exception("Could not parse source")
         }

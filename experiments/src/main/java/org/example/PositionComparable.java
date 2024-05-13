@@ -22,7 +22,8 @@ public class PositionComparable implements Comparable<PositionComparable> {
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (!(o instanceof PositionComparable p)) return false;
+        if (!(o instanceof PositionComparable )) return false;
+        PositionComparable p = (PositionComparable) o;
         return this.x == p.x && this.y == p.y;
     }
 
