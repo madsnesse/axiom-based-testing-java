@@ -7,9 +7,6 @@ import static no.uib.ii.StaticMethods.assertEquals;
 
 public class ObjectAxioms {
 
-    //@InheritAxioms(forClass = "org.example.Position")
-    //class PositionInherits{} //this class will inherit all axioms from its parent(s)
-
     @AxiomForExistingClass(className = "java.lang.Object")
     public static void equalsIsReflexive(Object o) {
         assertEquals(o,o);

@@ -32,58 +32,37 @@ class AxiomProcessor : AbstractProcessor() {
     private var generatorProcessing = GeneratorProcessing(dataGenerator);
     private fun loadAxiomsFromFiles(): MutableMap<String, MutableList<AxiomDefinition>> {
         val result: MutableMap<String, MutableList<AxiomDefinition>> = axiomDeclarations;
-        try {
-            val index =
-                AxiomProcessor::class.java.classLoader.getResource("META-INF/predefined_axioms/predefined_index")
-                    ?.readText().orEmpty()
-            println("index: $index")
-            for (line: String in index.split("\n")) {
-                if (line.isBlank()) continue
-                val file = AxiomProcessor::class.java.classLoader.getResource(
-                    "META-INF/predefined_axioms/${
-                        line.replace(
-                            " ",
-                            ""
-                        )
-                    }"
-                )
-                    ?.readText().orEmpty()
-                if (file.isNotEmpty()) {
-                    val jsonArray = JSONArray(file)
-                    val existing = axiomDeclarations.getOrDefault(line, ArrayList())
-                    for (axiomdecl in jsonArray) {
-                        val decl: JSONObject = axiomdecl as JSONObject
-                        parser.parseMethodDeclaration(decl["method"].toString()).result.ifPresent { md ->
-                            existing.add(
-                                AxiomDefinition(
-                                    md,
-                                    decl.get("isGeneric") as Boolean,
-                                    QualifiedClassName(decl.get("qualifiedClassName") as String)
-                                )
+         val index = this.javaClass.classLoader.getResource("META-INF/predefined_axioms/predefined_index")
+                ?.readText().orEmpty()
+        for (line: String in index.split("\n")) {
+            if (line.isBlank()) continue
+            val file = this.javaClass.classLoader.getResource(
+                "META-INF/predefined_axioms/${
+                    line.replace(
+                        " ",
+                        ""
+                    )
+                }"
+            )
+                ?.readText().orEmpty()
+            if (file.isNotEmpty()) {
+                val jsonArray = JSONArray(file)
+                val existing = axiomDeclarations.getOrDefault(line, ArrayList())
+                for (axiomdecl in jsonArray) {
+                    val decl: JSONObject = axiomdecl as JSONObject
+                    parser.parseMethodDeclaration(decl["method"].toString()).result.ifPresent { md ->
+                        existing.add(
+                            AxiomDefinition(
+                                md,
+                                decl.get("isGeneric") as Boolean,
+                                QualifiedClassName(decl.get("qualifiedClassName") as String)
                             )
-                        }
+                        )
                     }
-                    result[line.substringBefore(".json")] = existing
                 }
+                result[line.substringBefore(".json")] = existing
             }
-//            var r = processingEnv.filer.getResource(StandardLocation.SOURCE_PATH, "", "predefined_index")
-//            var classes : List<String>
-//            r.openReader(true).use { reader -> classes = reader.readLines() }
-//            var cs = ArrayList<AxiomDefinition>()
-//            classes.forEach { line ->
-//                var l : List<String>
-//                processingEnv.filer.getResource(StandardLocation.CLASS_OUTPUT, "predefined_axioms", line)
-//                    .openReader(true).use { reader -> l = reader.readLines() }
-//                l
-//            }
-        } catch (e: NullPointerException) {
-            println("nothing to index")
-        } catch (e: FileNotFoundException) {
-            println("nothing to index")
-        } catch (e: NoSuchElementException) {
-            println(e)
         }
-
         return result
     }
 
@@ -100,38 +79,38 @@ class AxiomProcessor : AbstractProcessor() {
                 val elementsAnnotatedWith = roundEnv?.getElementsAnnotatedWith(annotation)
                 try{
                     when (annotation.toString()) {
-                        "no.uib.ii.annotations.AxiomForExistingClass" ->
+                        "no.uib.ii.annotations.AxiomForExistingClass" -> {
                             UserDefinedProcessing.processAxiomForExistingClass(
                                 elementsAnnotatedWith,
                                 processingEnv.filer,
                                 processingEnv.typeUtils,
                                 axiomDeclarations
                             )
-
-                        "no.uib.ii.annotations.Axiom" ->
+                        }
+                        "no.uib.ii.annotations.Axiom" -> {
                             UserDefinedProcessing.processAxiom(
                                 elementsAnnotatedWith,
                                 processingEnv.filer,
                                 processingEnv.typeUtils,
                                 axiomDeclarations
                             )
-
-
-                        "no.uib.ii.annotations.InheritAxioms" ->
+                        }
+                        "no.uib.ii.annotations.InheritAxioms" -> {
                             UserDefinedProcessing.applyAxiomsFromParent(
                                 elementsAnnotatedWith,
                                 processingEnv.filer,
                                 processingEnv.typeUtils,
                                 axiomDeclarations
                             )
-
-                        "no.uib.ii.annotations.DefinedGenerator" ->
+                        }
+                        "no.uib.ii.annotations.DefinedGenerator" -> {
                             generatorProcessing.processGenerator(
                                 elementsAnnotatedWith,
                                 processingEnv.filer,
                                 processingEnv.typeUtils,
                                 axiomDeclarations
                             )
+                        }
                     }
                 }catch (e: Exception){
                     processingEnv.messager.printMessage(
@@ -140,12 +119,6 @@ class AxiomProcessor : AbstractProcessor() {
                 }
             }
         )
-
-//        if (hasGenerated){
-//            TestClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer)
-//        };
-
-
         if (roundEnv?.processingOver()!!) {
             testClassGenerator.generateTestClassesForAxioms(axiomDeclarations, processingEnv.filer)
             fileUtils.writeGeneratorList(dataGenerator.availableGenerators)

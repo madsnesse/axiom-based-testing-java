@@ -42,22 +42,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
-        <configuration>
-          <statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
-            <usePhrasedFileName>false</usePhrasedFileName>
-            <usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
-            <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
-            <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
-          </statelessTestsetReporter>
-          <consoleOutputReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter">
-            <usePhrasedFileName>false</usePhrasedFileName>
-          </consoleOutputReporter>
-          <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporter">
-            <usePhrasedFileName>false</usePhrasedFileName>
-            <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
-            <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
-          </statelessTestsetInfoReporter>
-        </configuration>
       </plugin>
 
     </plugins>
