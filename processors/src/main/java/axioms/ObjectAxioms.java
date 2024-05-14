@@ -1,4 +1,4 @@
-package no.uib.ii.algebaric_structures;
+package axioms;
 
 
 import no.uib.ii.annotations.AxiomForExistingClass;

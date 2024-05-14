@@ -1,4 +1,4 @@
-package no.uib.ii.algebaric_structures;
+package defaultgenerators;
 
 import no.uib.ii.annotations.DefinedGenerator;
 import no.uib.ii.defaultgenerators.Generator;

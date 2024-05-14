@@ -1,4 +1,4 @@
-package no.uib.ii.algebaric_structures;
+package axioms;
 
 import no.uib.ii.annotations.AxiomForExistingClass;
 
@@ -10,4 +10,6 @@ public class ComparableAxioms {
     public static <T extends Comparable<T>> void compareToConsistentWithSignum(T x, T y) {
         assertEquals(java.lang.Integer.signum(x.compareTo(y)), -java.lang.Integer.signum(y.compareTo(x)));
     }
+
+
 }

@@ -1,0 +1,1 @@
+[{"method":"@AxiomForExistingClass(className = \"java.lang.Comparable\")\npublic static <T extends Comparable<T>> void compareToConsistentWithSignum(T x, T y) {\n    assertEquals(java.lang.Integer.signum(x.compareTo(y)), -java.lang.Integer.signum(y.compareTo(x)));\n}","isGeneric":true,"qualifiedClassName":"java.lang.Comparable"}]
