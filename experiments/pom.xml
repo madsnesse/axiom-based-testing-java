@@ -3,7 +3,7 @@
     <parent>
         <groupId>no.uib.ii</groupId>
         <artifactId>jaxioms-kotlin</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.11</version>
     </parent>
 
     <artifactId>experiments</artifactId>
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>no.uib.ii</groupId>
       <artifactId>processors</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
