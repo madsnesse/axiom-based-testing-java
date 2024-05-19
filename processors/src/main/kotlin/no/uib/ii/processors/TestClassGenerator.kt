@@ -180,7 +180,6 @@ class TestClassGenerator (private val dataGenerator: DataGenerator) {
                     "        for (int i = 0; i < NUMBER_OF_CASES; i++) {\n" +
                     "            clazzStream.add(Arguments.of($generateStatement));\n" + //TODO dont have fixed number
                     "        }\n" +
-                    "        System.out.println(clazzStream); \n" +
                     "        return clazzStream.stream();\n" +
                     "    }"
             s = s.replace("Clazz", className)
