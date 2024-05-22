@@ -50,6 +50,7 @@ class FileUtils(private val filer: Filer) {
     }
 
     companion object {
+         private val traverser = ASTTraverser();
         fun getSourceFile(filer: Filer, packageName: String, fileName: String): String {
             var s = ""
             try {
@@ -77,9 +78,8 @@ class FileUtils(private val filer: Filer) {
             }
         }
         fun getClassOrInterfaceForTypeElement(typeElement: TypeElement, filer: Filer) : ClassOrInterfaceDeclaration {
-            val sourceFile = FileUtils.getSourceFileForTypeElement(typeElement, filer)
+            val sourceFile = getSourceFileForTypeElement(typeElement, filer)
 
-            val traverser = ASTTraverser();
             val cu = traverser.loadClassFromSource(sourceFile);
 
             return cu.second;
@@ -87,14 +87,13 @@ class FileUtils(private val filer: Filer) {
         fun getCompilationUnitForTypeElement(typeElement: TypeElement, filer: Filer) : CompilationUnit {
             val sourceFile = FileUtils.getSourceFileForTypeElement(typeElement, filer)
 
-            val traverser = ASTTraverser();
             val cu = traverser.loadClassFromSource(sourceFile);
 
             return cu.first;
         }
         fun getSourceFileForTypeElement(typeElement: TypeElement, filer: Filer): String {
 
-            val sourceFile = FileUtils.getSourceFile(
+            val sourceFile = getSourceFile(
                 filer,
                 packageFromQualifiedName(typeElement.qualifiedName.toString()),
                 classFromQualifiedName(typeElement.qualifiedName.toString())
@@ -103,7 +102,7 @@ class FileUtils(private val filer: Filer) {
         }
 
         fun getCompilationUnitForRelativePath(path: String, filer: Filer) : ClassOrInterfaceDeclaration {
-            var sourceFile = FileUtils.getSourceFile(filer, path.substringBeforeLast("."), path.substringAfterLast("."))
+            var sourceFile = getSourceFile(filer, path.substringBeforeLast("."), path.substringAfterLast("."))
             return ASTTraverser().loadClassFromSource(sourceFile).second
         }
         private fun packageFromQualifiedName(qualifiedName: String): String {

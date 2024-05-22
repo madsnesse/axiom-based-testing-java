@@ -1,4 +1,4 @@
-package defaultgenerators;
+package no.uib.ii.defaultgenerators;
 
 import no.uib.ii.annotations.DefinedGenerator;
 import no.uib.ii.defaultgenerators.Generator;
