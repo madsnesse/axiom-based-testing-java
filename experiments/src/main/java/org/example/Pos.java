@@ -16,22 +16,22 @@ public class Pos implements Comparable<Pos>, Group<Pos> {
     public Pos(int x, int y) {
         this.x = x;
         this.y = y;
-        //dataInvariant(this);
+        dataInvariant(this);
     }
 
     @Override
     public Pos binaryOperation(Pos a) {
-        return this;
+        return new Pos((this.x + a.x) % 8, (this.y + a.y) % 8);
     }
 
     @Override
     public Pos inverse() {
-        return this;
+        return new Pos(this.y, this.x);
     }
 
     @Override
     public Pos identity() {
-        return this;
+        return new Pos(0,0);
     }
 
     @Override
@@ -41,8 +41,8 @@ public class Pos implements Comparable<Pos>, Group<Pos> {
 
     //@Axiom //TODO kanskje datainvariant som egen annotasjon
     public static void dataInvariant(Pos p) {
-        assertEquals(p.x, Math.abs(p.x));
-        assertEquals(p.y, Math.abs(p.y));
+        assertEquals(true, 0 <= p.x && p.y < 8);
+        assertEquals(true, 0 <= p.y && p.y < 8);
     }
 
     @Override

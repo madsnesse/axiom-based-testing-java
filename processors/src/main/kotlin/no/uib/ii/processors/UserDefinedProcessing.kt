@@ -96,7 +96,7 @@ class UserDefinedProcessing {
                 return false;
             }
             for (i in 0 until parameters.size) {
-                var p = parameters1[i].toString().substringAfterLast(".")
+                var p = parameters1[i].asType().toString().substringAfterLast(".")
                 val p1 = parameters[i].type.toString()
                 if (p1 != p) {
                     return false;
@@ -151,21 +151,19 @@ class UserDefinedProcessing {
             typeUtils: Types,
             axiomDeclarations: MutableMap<String, MutableList<AxiomDefinition>>
         ) {
-            elementsAnnotatedWith?.forEach (
-                fun(element: Element) {
-                    var typeElement = element.enclosingElement as TypeElement
-                    val annotation = element.getAnnotation(AxiomForExistingClass::class.java)
-                    val axiomMethod = processAxiomMethod(element, typeElement, filer, typeUtils)
-                    axiomMethod.setGeneric(true)
-                    axiomMethod.setQualifiedClassName(QualifiedClassName(annotation.className))
-                    val existingAxiomsForClass = axiomDeclarations.getOrDefault(
-                        annotation.className,
-                        ArrayList()
-                    );
-                    existingAxiomsForClass.add(axiomMethod)
-                    axiomDeclarations[annotation.className] = existingAxiomsForClass
-                }
-            )
+            elementsAnnotatedWith?.forEach { element ->
+                var typeElement = element.enclosingElement as TypeElement
+                val annotation = element.getAnnotation(AxiomForExistingClass::class.java)
+                val axiomMethod = processAxiomMethod(element, typeElement, filer, typeUtils)
+                axiomMethod.setGeneric(true)
+                axiomMethod.setQualifiedClassName(QualifiedClassName(annotation.className))
+                val existingAxiomsForClass = axiomDeclarations.getOrDefault(
+                    annotation.className,
+                    ArrayList()
+                );
+                existingAxiomsForClass.add(axiomMethod)
+                axiomDeclarations[annotation.className] = existingAxiomsForClass
+            }
         }
 
 
