@@ -51,8 +51,6 @@ class UserDefinedProcessing {
             val methodName = (element as ExecutableElement).simpleName.toString();
             val parameters = element.parameters;
 
-            //TODO check if it is a interface, if so find the classes in the classpath that implement said interface
-
             val cu = FileUtils.getClassOrInterfaceForTypeElement(typeElement, filer);
 
             if (cu.isInterface or cu.isAbstract) { //TODO remove
@@ -96,7 +94,7 @@ class UserDefinedProcessing {
                 return false;
             }
             for (i in 0 until parameters.size) {
-                var p = parameters1[i].toString().substringAfterLast(".")
+                var p = parameters1[i].asType().toString().split(".").last(); //TODO: maybe not do this so hacky
                 val p1 = parameters[i].type.toString()
                 if (p1 != p) {
                     return false;
