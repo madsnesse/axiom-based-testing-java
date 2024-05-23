@@ -1,5 +1,6 @@
 package no.uib.ii.generators;
-import no.uib.ii.defaultgenerators.*;
+import no.uib.ii.defaultgenerators.Generator;
+import defaultgenerators.*;
 
 import no.uib.ii.annotations.DefinedGenerator;
 
@@ -7,7 +8,7 @@ import java.util.Random;
 
 @DefinedGenerator()
 public class CLASS_NAMEGenerator extends Generator<CLASS_NAME> {
-    public CLASS_NAMEGenerator() {
+    public CLASS_NAMEGenerator() { //TODO change template to be for generic name
         super(new Random());
     }
 

@@ -27,7 +27,7 @@ class UserDefinedProcessing {
 
             elementsAnnotatedWith?.forEach (
                 fun (element: Element) {
-                    val typeElement = element.enclosingElement as TypeElement
+                    var typeElement = element.enclosingElement as TypeElement
                     val axiomMethod = processAxiomMethod(element, typeElement, filer, typeUtils)
 
                     val existingAxiomsForClass = axiomDeclarations.getOrDefault(
@@ -51,9 +51,11 @@ class UserDefinedProcessing {
             val methodName = (element as ExecutableElement).simpleName.toString();
             val parameters = element.parameters;
 
+            //TODO check if it is a interface, if so find the classes in the classpath that implement said interface
+
             val cu = FileUtils.getClassOrInterfaceForTypeElement(typeElement, filer);
 
-            if (cu.isInterface or cu.isAbstract) { //TODO remove
+            if (cu.isInterface or cu.isAbstract) {
                 //find all children in classpath
                 var l = FileUtils.getAllSourceFilesInClassPath(filer, typeUtils);
             }
@@ -61,9 +63,7 @@ class UserDefinedProcessing {
             var methodDeclaration: MethodDeclaration? =
                 getMethodDeclarationForAxiom(cu.methods, methodName, parameters);
 
-            return AxiomDefinition(methodDeclaration!!,
-                qualifiedClassName = QualifiedClassName(cu.fullyQualifiedName.orElseThrow()),
-                generic = methodDeclaration.isGeneric)
+            return AxiomDefinition(methodDeclaration!!, qualifiedClassName = QualifiedClassName(cu.fullyQualifiedName.orElseThrow()), generic = methodDeclaration.isGeneric)
         }
 
         private fun getMethodDeclarationForAxiom(
@@ -74,6 +74,7 @@ class UserDefinedProcessing {
             var result: MethodDeclaration? = null
             methods.forEach(fun(method: MethodDeclaration) {
                 if (method.nameAsString == methodName) {
+                    var allContains = true
                     if (allParametersAreEqual(method.parameters, parameters)) {
                         result = method;
                     }
