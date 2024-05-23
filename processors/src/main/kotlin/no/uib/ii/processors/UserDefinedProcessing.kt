@@ -27,7 +27,7 @@ class UserDefinedProcessing {
 
             elementsAnnotatedWith?.forEach (
                 fun (element: Element) {
-                    var typeElement = element.enclosingElement as TypeElement
+                    val typeElement = element.enclosingElement as TypeElement
                     val axiomMethod = processAxiomMethod(element, typeElement, filer, typeUtils)
 
                     val existingAxiomsForClass = axiomDeclarations.getOrDefault(
@@ -55,7 +55,7 @@ class UserDefinedProcessing {
 
             val cu = FileUtils.getClassOrInterfaceForTypeElement(typeElement, filer);
 
-            if (cu.isInterface or cu.isAbstract) {
+            if (cu.isInterface or cu.isAbstract) { //TODO remove
                 //find all children in classpath
                 var l = FileUtils.getAllSourceFilesInClassPath(filer, typeUtils);
             }
@@ -63,7 +63,9 @@ class UserDefinedProcessing {
             var methodDeclaration: MethodDeclaration? =
                 getMethodDeclarationForAxiom(cu.methods, methodName, parameters);
 
-            return AxiomDefinition(methodDeclaration!!, qualifiedClassName = QualifiedClassName(cu.fullyQualifiedName.orElseThrow()), generic = methodDeclaration.isGeneric)
+            return AxiomDefinition(methodDeclaration!!,
+                qualifiedClassName = QualifiedClassName(cu.fullyQualifiedName.orElseThrow()),
+                generic = methodDeclaration.isGeneric)
         }
 
         private fun getMethodDeclarationForAxiom(
@@ -74,7 +76,6 @@ class UserDefinedProcessing {
             var result: MethodDeclaration? = null
             methods.forEach(fun(method: MethodDeclaration) {
                 if (method.nameAsString == methodName) {
-                    var allContains = true
                     if (allParametersAreEqual(method.parameters, parameters)) {
                         result = method;
                     }
@@ -95,7 +96,7 @@ class UserDefinedProcessing {
                 return false;
             }
             for (i in 0 until parameters.size) {
-                var p = parameters1[i].asType().toString().split(".").last(); //TODO: maybe not do this so hacky
+                var p = parameters1[i].toString().substringAfterLast(".")
                 val p1 = parameters[i].type.toString()
                 if (p1 != p) {
                     return false;
