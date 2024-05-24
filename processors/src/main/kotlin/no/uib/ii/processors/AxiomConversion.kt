@@ -10,7 +10,6 @@ import no.uib.ii.QualifiedClassName
 import no.uib.ii.exceptions.UnexpectedError
 import javax.annotation.processing.Filer
 import javax.lang.model.element.TypeElement
-import javax.lang.model.util.Types
 
 fun convertParentAxioms(
     axioms: List<AxiomDefinition>,
@@ -18,8 +17,7 @@ fun convertParentAxioms(
     filer: Filer
 ): List<AxiomDefinition> {
     val result = ArrayList<AxiomDefinition>();
-    axioms.forEach { ad ->
-        val axiomDefinition = ad.copy()
+    axioms.forEach { axiomDefinition ->
         if (!axiomDefinition.isGeneric() &&
             !axiomDefinition.getQualifiedClassName().equals(typeElement.qualifiedName)
         ) {
@@ -39,10 +37,9 @@ fun convertParentAxioms(
                 )
                     containsAxiomOwner = true
             }
-            if (!(axiomDefinition.getQualifiedClassName().equalsString(typeElement.qualifiedName.toString()))) {
-                if (!axiomDefinition.getQualifiedClassName().equalsString("java.lang.Object") && !containsAxiomOwner) {
-                    throw UnexpectedError("Axiom owner is not a parent of the class")
-                }
+            if (!(axiomDefinition.getQualifiedClassName().equalsString(typeElement.qualifiedName.toString())) &&
+                !axiomDefinition.getQualifiedClassName().equalsString("java.lang.Object") && !containsAxiomOwner) {
+                throw UnexpectedError("Axiom owner is not a parent of the class")
             }
             val m = axiomDefinition.getMethod()
             val newType = StaticJavaParser.parseType(typeElement.qualifiedName.toString())
@@ -66,11 +63,9 @@ fun convertParentAxioms(
 fun convertGenericAxioms(
     axioms: MutableList<AxiomDefinition>,
     typeElement: TypeElement,
-    typeUtils: Types?
 ): MutableList<AxiomDefinition> {
     val newAxioms = ArrayList<AxiomDefinition>();
-    axioms.forEach { ad ->
-        val axiomDefinition = ad.copy()
+    axioms.forEach { axiomDefinition ->
         if (axiomDefinition.isGeneric()) {
             val m = axiomDefinition.getMethod()
             val t = StaticJavaParser.parseType(typeElement.qualifiedName.toString())

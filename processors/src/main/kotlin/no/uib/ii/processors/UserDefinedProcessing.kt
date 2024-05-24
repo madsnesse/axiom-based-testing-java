@@ -115,26 +115,24 @@ class UserDefinedProcessing {
 
             elementsAnnotatedWith?.forEach(
                 fun(element: Element) {
-                    var typeElement = element as TypeElement
+                    val typeElement = element as TypeElement
                     var axioms = axiomDeclarations.getOrDefault(
                         typeElement.qualifiedName.toString(),
                         ArrayList()
                     )
                     typeElement.interfaces.forEach {
-                        var e = typeUtils?.asElement(it) as TypeElement;
-                        val axs = axiomDeclarations[e.qualifiedName?.toString()]
-                        if (axs != null) {
-                            axioms.addAll(axs)
+                        val e = typeUtils?.asElement(it) as TypeElement
+                        axiomDeclarations[e.qualifiedName?.toString()]?.forEach { axiom ->
+                            axioms.add(axiom.copy())
                         }
-
                     }
 
-                    var e = typeUtils?.asElement(typeElement.superclass) as TypeElement
+                    val e = typeUtils?.asElement(typeElement.superclass) as TypeElement
                     axiomDeclarations[e.qualifiedName.toString()]?.forEach { axiom ->
                         axioms.add(axiom.copy())
                     }
 
-                    axioms = convertGenericAxioms(axioms, typeElement, typeUtils)
+                    axioms = convertGenericAxioms(axioms, typeElement)
                     axioms = convertParentAxioms(axioms.toMutableList(), typeElement, filer).toMutableList()
                     axiomDeclarations[typeElement.qualifiedName.toString()] = axioms
 
