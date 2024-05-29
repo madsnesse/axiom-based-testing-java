@@ -68,31 +68,3 @@ public class Pos implements Comparable<Pos>, Group<Pos> {
     }
 
 }
-
-
-//TODO: se på å arve på denne måten i stedet:
-//class PosCompare implements Comparator<Pos> {
-//
-//    @Override
-//    public int compare(Pos o1, Pos o2) {
-//        return o1.compareTo(o2);
-//    }
-//}
-//
-//class PosAdditive implements Groupoid<Pos> {
-//
-//    @Override
-//    public Pos binaryOperation(Pos a, Pos b) {
-//        return a.binaryOperation(b);
-//    }
-//
-//    @Override
-//    public Pos identity() {
-//        return null;
-//    }
-//
-//    @Override
-//    public Pos inverse(Pos a) {
-//        return null;
-//    }
-//}

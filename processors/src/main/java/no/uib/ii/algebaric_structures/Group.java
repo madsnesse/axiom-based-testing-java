@@ -20,4 +20,15 @@ public interface Group<T> {
         T bc = b.binaryOperation(c);
         assertEquals(ab.binaryOperation(c), bc.binaryOperation(a));
     }
+
+    @Axiom
+    static <T extends Group<T>> void neutralAxiom(T a) {
+        assertEquals(a, a.binaryOperation(a.identity()));
+    }
+
+    @Axiom
+    static <T extends Group<T>> void inverseAxiom(T a) {
+        assertEquals(a, a.binaryOperation(a.inverse()));
+        assertEquals(a.binaryOperation(a.inverse()), a);
+    }
 }

@@ -95,6 +95,7 @@ class UserDefinedProcessing {
                 return false;
             }
             for (i in 0 until parameters.size) {
+                if (parameters[i].type.toString().equals(parameters1[i].asType().toString())) return true;
                 var p = parameters1[i].asType().toString().split(".").last(); //TODO: maybe not do this so hacky
                 val p1 = parameters[i].type.toString()
                 if (p1 != p) {
