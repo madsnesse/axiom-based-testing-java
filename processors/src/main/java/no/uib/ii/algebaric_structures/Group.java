@@ -2,6 +2,7 @@ package no.uib.ii.algebaric_structures;
 
 import no.uib.ii.annotations.Axiom;
 import no.uib.ii.annotations.InheritAxioms;
+import org.checkerframework.checker.units.qual.A;
 
 import static no.uib.ii.StaticMethods.assertEquals;
 
@@ -28,7 +29,6 @@ public interface Group<T> {
 
     @Axiom
     static <T extends Group<T>> void inverseAxiom(T a) {
-        assertEquals(a, a.binaryOperation(a.inverse()));
-        assertEquals(a.binaryOperation(a.inverse()), a);
+        assertEquals(a.identity(), a.binaryOperation(a.inverse()));
     }
 }
