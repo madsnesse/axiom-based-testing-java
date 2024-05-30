@@ -24,13 +24,15 @@ public class ObjectAxioms {
     }
 
     @AxiomForExistingClass(className = "java.lang.Object")
-    public static void equalsIsConsistent(Object x, Object y) {
-        assertEquals(x.equals(y), x.equals(y));
+    public static void equalsNullIsFalse(Object x) {
+        assertEquals(false, x.equals(null));
     }
 
     @AxiomForExistingClass(className = "java.lang.Object")
-    public static void equalsNullIsFalse(Object x) {
-        assertEquals(false, x.equals(null));
+    public static void hashCodeCongruenceOnEquals(Object x, Object y) {
+        if (x.equals(y)) {
+            assertEquals(x.hashCode(), y.hashCode());
+        }
     }
 
 }
