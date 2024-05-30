@@ -30,13 +30,7 @@ public class ObjectAxioms {
 
     @AxiomForExistingClass(className = "java.lang.Object")
     public static void equalsNullIsFalse(Object x) {
-        assertEquals(x.equals(null), false);
-    }
-
-    @AxiomForExistingClass(className = "java.lang.Object")
-    public static void equalsCongruence(Object o) {
-        var m = o.getClass().getMethods(); //the public methods of a class
-        // legg inn metoder som skal sjekkes i axiom prosseseringen
+        assertEquals(false, x.equals(null));
     }
 
 }
