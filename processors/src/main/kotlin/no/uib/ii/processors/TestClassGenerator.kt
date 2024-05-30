@@ -260,8 +260,7 @@ class TestClassGenerator (private val dataGenerator: DataGenerator) {
         ): List<ImportDeclaration> {
 
             val list = mutableListOf<ImportDeclaration>();
-            list += (ImportDeclaration("org.junit.jupiter.api.Assertions.assertEquals", true, false));
-            list += (ImportDeclaration("org.junit.jupiter.api.Assertions.assertTrue", true, false));
+            list += (ImportDeclaration("org.junit.jupiter.api.Assertions", true, true));
             list += (ImportDeclaration("org.junit.jupiter.params.ParameterizedTest", false, false));
             list += (ImportDeclaration("org.junit.jupiter.api.BeforeAll", false, false));
             list += (ImportDeclaration("org.junit.jupiter.params.provider.Arguments", false, false));
