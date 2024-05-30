@@ -20,11 +20,11 @@ public class ComparableAxioms {
     public static <T extends Comparable<T>> void compareToConsistentWithSignum(T x, T y) {
         try {
             var left = java.lang.Integer.signum(x.compareTo(y));
-            assertEquals(left,  -java.lang.Integer.signum(y.compareTo(x)));
+            assertEquals(left, -java.lang.Integer.signum(y.compareTo(x)));
         } catch (Exception e) {
             try {
                 var right = -java.lang.Integer.signum(y.compareTo(x));
-            }catch (Exception ex) {
+            } catch (Exception ex) {
                 assertTrue(true);
             }
             assertTrue(false);
@@ -40,5 +40,16 @@ public class ComparableAxioms {
         if (x.compareTo(y) > 0 && y.compareTo(z) > 0) {
             assertEquals(true, x.compareTo(z) > 0);
         } else assertTrue(true);
+    }
+
+    /**
+     * It is strongly recommended, but not strictly required that (x.compareTo(y)==0) == (x.equals(y)).//TODO create support for recommended axioms
+     * Generally speaking, any class that implements the Comparable interface
+     * and violates this condition should clearly indicate this fact. The recommended language is
+     * "Note: this class has a natural ordering that is inconsistent with equals."
+     */
+    @AxiomForExistingClass(className = "java.lang.Comparable")
+    public static <T extends Comparable<T>> void compareToEqualsConsistent(T x, T y) {
+        assertEquals(x.compareTo(y) == 0, x.equals(y));
     }
 }
