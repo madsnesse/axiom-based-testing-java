@@ -1,7 +1,8 @@
 package axioms;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import no.uib.ii.annotations.AxiomForExistingClass;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Project specific recommendations as axioms for the java interface
@@ -23,6 +24,7 @@ public class ComparableAxiomsCongruence {
      * This axiom is less restrictive than the strong recommendation that the
      * natural ordering is consistent with equals.
      */
+    @AxiomForExistingClass(className = "java.lang.Comparable")
     public static <T extends Comparable<T>> void congruenceCompareTo(T a, T b) {
         try {
             if (a.equals(b))

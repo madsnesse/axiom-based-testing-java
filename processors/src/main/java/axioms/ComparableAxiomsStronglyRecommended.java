@@ -2,8 +2,7 @@ package axioms;
 
 import no.uib.ii.annotations.AxiomForExistingClass;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Axioms capturing strong recommendations for the java interface
