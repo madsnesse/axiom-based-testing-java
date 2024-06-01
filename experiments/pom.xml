@@ -3,7 +3,7 @@
     <parent>
         <groupId>no.uib.ii</groupId>
         <artifactId>jaxioms</artifactId>
-        <version>1.0.12</version>
+        <version>1.0.7-STABLE</version>
     </parent>
 
     <artifactId>experiments</artifactId>
@@ -20,7 +20,7 @@
     <dependency>
       <groupId>no.uib.ii</groupId>
       <artifactId>processors</artifactId>
-      <version>1.0.12</version>
+      <version>1.0.7-STABLE</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
