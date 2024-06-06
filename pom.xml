@@ -12,6 +12,7 @@
   <profiles>
     <profile>
       <id>releaseProfile</id>
+      <activation><activeByDefault>true</activeByDefault></activation>
       <modules>
         <module>generator</module>
         <module>processors</module>
@@ -20,7 +21,6 @@
     </profile>
     <profile>
       <id>testProfile</id>
-      <activation><activeByDefault>true</activeByDefault></activation>
       <modules>
         <module>generator</module>
         <module>processors</module>
